@@ -28,27 +28,51 @@ public class ProductService {
 
     public List<Product> getProductList() {return productRepository.findAll();}
 
-    public void deleteProduct(ProductId id) {productRepository.deleteById(id);}
+    public void deleteProduct(ProductId id) {
+        productRepository.findById(id).ifPresent(s->productRepository.deleteById(s.productId()));
+    }
 
-    public Product findById(ProductId id) {return productRepository.findById(id).get();}
+    public Optional<Product> findById(ProductId id) {return productRepository.findById(id);}
 
     private List<Product> findWithSameManufacturer(ProductId id) {
-        String manufacturer = findById(id).manufacturer();
+
+        String manufacturer = findById(id).get().manufacturer();
+
 
         List<Product> list = productRepository.findAll();
         List<Product> sameManufacturers = new ArrayList<>();
 
         for (Product p: list) {
-            if(p.manufacturer() == manufacturer && p.productId()!=id ){
+            if(Objects.equals(p.manufacturer(), manufacturer) && p.productId()!=id ){
                 sameManufacturers.add(p);
             }
         }
         return sameManufacturers;
     }
 
-    public List<Product> findRelated(ProductId id) {
+    public Optional<Product> updateProduct(ProductId id,
+                                           Optional<String> name,
+                                           Optional<String> manufacturer,
+                                           Optional<BigDecimal> price,
+                                           Optional<String> description)
+    {
+        productRepository.findById(id)
+                .map(productFromRepository ->
+                    new Product(id,
+                            name.orElse(productFromRepository.name()),
+                            manufacturer.orElse(productFromRepository.manufacturer()),
+                            productFromRepository.variants(),
+                            price.orElse(productFromRepository.price()),
+                            productFromRepository.imgPath(),
+                            description.orElse(productFromRepository.description()))
+                ).ifPresent(productRepository::save);
+        return productRepository.findById(id);
+    }
+
+    public List<Product> findRelatedOrRandom(ProductId id) {
         List<Product> sameManufacturers = findWithSameManufacturer(id);
-        List<Product> types = productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        String productManufacturer = findById(id).get().manufacturer();
         Random random = new Random();
         int max = sameManufacturers.size();
         int randomNumber;
@@ -57,14 +81,14 @@ public class ProductService {
 
         while(readyResponse.size() !=4 ) {
             if(max == 0) {
-                int newMax = types.size();
+                int newMax = products.size();
                 randomNumber = random.nextInt(newMax);
-                if(types.get(randomNumber).manufacturer() == findById(id).manufacturer())
+                if(Objects.equals(products.get(randomNumber).manufacturer(), productManufacturer ))
                 {
-                    types.remove(randomNumber);
+                    products.remove(randomNumber);
                 }
                 else {
-                    readyResponse.add(types.get(randomNumber));
+                    readyResponse.add(products.get(randomNumber));
                 }
 
 
@@ -82,8 +106,7 @@ public class ProductService {
     public Product registerNewProduct(String name, String manufacturer, BigDecimal price, String imgPath, String description) {
 
         if(!productRepository.existsByNameAndManufacturer(name,manufacturer)) {
-            Product product = productRepository.save(new Product(productIdSupplier.get(), name, manufacturer, new ArrayList<>(), price, imgPath, description));
-            return product;
+            return productRepository.save(new Product(productIdSupplier.get(), name, manufacturer, new ArrayList<>(), price, imgPath, description));
         }
         else throw new alreadyExistsException("Product with same manufacturer already exists");
     }
