@@ -1,14 +1,14 @@
 package com.ArtMar_Store.Api.api.products;
 
-import com.ArtMar_Store.Api.domain.products.Color;
-import com.ArtMar_Store.Api.domain.products.ProductId;
-import com.ArtMar_Store.Api.domain.products.Variant;
-import com.ArtMar_Store.Api.domain.products.VariantService;
+import com.ArtMar_Store.Api.domain.products.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +48,16 @@ public class VariantController {
                 .body(
                         VariantResponseDto.fromDomain(variant)
                 );
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(alreadyExistsException.class)
+    public ResponseEntity<ErrorDTO> exceptionHandler(alreadyExistsException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorDTO.newOf(ex
+                        .getMessage(),
+                HttpStatus.CONFLICT,
+                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
     }
 
 
