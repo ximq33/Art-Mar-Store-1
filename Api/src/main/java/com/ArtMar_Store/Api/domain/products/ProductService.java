@@ -5,9 +5,7 @@ import com.ArtMar_Store.Api.infrastructure.VariantRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 
 @Service
