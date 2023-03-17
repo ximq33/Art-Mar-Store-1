@@ -1,17 +1,19 @@
 package com.ArtMar_Store.Api.domain.products;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.math.BigDecimal;
 
-public record Variant(VariantId variantId,
-                      String name,
+@Document
+public record Variant(@Id VariantId variantId,
                       BigDecimal price,
                       int quantity,
                       boolean disabled,
-                      String imgName,
+                      String imgPath,
                       String manufacturer,
-                      String description,
                       Color color,
                       String side,
                       String pattern,
-                      Product product) {
+                      ProductId productId) {
 }
