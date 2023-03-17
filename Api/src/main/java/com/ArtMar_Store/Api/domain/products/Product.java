@@ -1,9 +1,14 @@
 package com.ArtMar_Store.Api.domain.products;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.math.BigDecimal;
 import java.util.List;
 
+@Document
 public record Product(
 
+        @Id
         ProductId productId,
         String name,
 
