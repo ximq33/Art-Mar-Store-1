@@ -1,6 +1,8 @@
-package com.ArtMar_Store.Api.api.products;
+package com.ArtMar_Store.Api.api.variants;
 
 import com.ArtMar_Store.Api.domain.products.*;
+import com.ArtMar_Store.Api.domain.variants.Color;
+import com.ArtMar_Store.Api.domain.variants.Variant;
 
 import java.math.BigDecimal;
 

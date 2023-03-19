@@ -1,6 +1,6 @@
-package com.ArtMar_Store.Api.api.products;
+package com.ArtMar_Store.Api.api.variants;
 
-import com.ArtMar_Store.Api.domain.products.Color;
+import com.ArtMar_Store.Api.domain.variants.Color;
 import com.ArtMar_Store.Api.domain.products.ProductId;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

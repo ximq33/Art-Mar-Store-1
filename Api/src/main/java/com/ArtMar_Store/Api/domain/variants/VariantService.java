@@ -1,5 +1,7 @@
-package com.ArtMar_Store.Api.domain.products;
+package com.ArtMar_Store.Api.domain.variants;
 
+import com.ArtMar_Store.Api.domain.products.ProductId;
+import com.ArtMar_Store.Api.domain.products.alreadyExistsException;
 import com.ArtMar_Store.Api.infrastructure.VariantRepository;
 import org.springframework.stereotype.Service;
 

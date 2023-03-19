@@ -1,4 +1,5 @@
 package com.ArtMar_Store.Api.domain.products;
+import com.ArtMar_Store.Api.domain.variants.Variant;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

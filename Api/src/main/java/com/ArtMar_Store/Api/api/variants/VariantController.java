@@ -1,18 +1,20 @@
-package com.ArtMar_Store.Api.api.products;
+package com.ArtMar_Store.Api.api.variants;
 
+import com.ArtMar_Store.Api.api.products.ErrorDTO;
 import com.ArtMar_Store.Api.domain.products.*;
+import com.ArtMar_Store.Api.domain.variants.Variant;
+import com.ArtMar_Store.Api.domain.variants.VariantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ArtMar_Store.Api.api.products.VariantController.variant_baseURL;
+import static com.ArtMar_Store.Api.api.variants.VariantController.variant_baseURL;
 
 @RestController
 @RequestMapping(variant_baseURL)
@@ -54,8 +56,7 @@ public class VariantController {
     @ExceptionHandler(alreadyExistsException.class)
     public ResponseEntity<ErrorDTO> exceptionHandler(alreadyExistsException ex) {
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorDTO.newOf(ex
-                        .getMessage(),
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorDTO.newOf(ex.getMessage(),
                 HttpStatus.CONFLICT,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
     }

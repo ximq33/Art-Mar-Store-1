@@ -1,4 +1,4 @@
-package com.ArtMar_Store.Api.domain.products;
+package com.ArtMar_Store.Api.domain.variants;
 
 public record Color(
         String colorName,

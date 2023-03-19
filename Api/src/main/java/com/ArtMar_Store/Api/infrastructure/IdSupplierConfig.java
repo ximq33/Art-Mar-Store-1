@@ -1,7 +1,7 @@
 package com.ArtMar_Store.Api.infrastructure;
 
 import com.ArtMar_Store.Api.domain.products.ProductId;
-import com.ArtMar_Store.Api.domain.products.VariantId;
+import com.ArtMar_Store.Api.domain.variants.VariantId;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
