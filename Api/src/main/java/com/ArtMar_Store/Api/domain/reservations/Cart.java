@@ -1,4 +1,4 @@
-package com.ArtMar_Store.Api.domain.cart;
+package com.ArtMar_Store.Api.domain.reservations;
 
 import com.ArtMar_Store.Api.domain.variants.Variant;
 

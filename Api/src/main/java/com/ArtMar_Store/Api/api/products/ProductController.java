@@ -56,7 +56,8 @@ public class ProductController {
 
     @GetMapping("/{id}")
     ResponseEntity<ProductResponseDto> getProduct(@PathVariable String id) {
-        return ResponseEntity.of(productService.findById(new ProductId(id)).map(ProductResponseDto::fromDomain));
+        return ResponseEntity.of(productService.findById(new ProductId(id))
+                .map(ProductResponseDto::fromDomain));
     }
 
     @GetMapping("/relatedOrRandom/{id}")
@@ -80,5 +81,5 @@ public class ProductController {
                 .map(ProductResponseDto::fromDomain));
     }
 
-    static final String product_baseURL = "/products";
+static final String product_baseURL = "/products";
 }

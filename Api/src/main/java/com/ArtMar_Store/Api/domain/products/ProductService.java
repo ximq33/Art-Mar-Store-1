@@ -27,7 +27,8 @@ public class ProductService {
     public List<Product> getProductList() {return productRepository.findAll();}
 
     public void deleteProduct(ProductId id) {
-        productRepository.findById(id).ifPresent(s->productRepository.deleteById(s.productId()));
+        productRepository.findById(id)
+                .ifPresent(s->productRepository.deleteById(s.productId()));
     }
 
     public Optional<Product> findById(ProductId id) {return productRepository.findById(id);}

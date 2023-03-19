@@ -55,9 +55,7 @@ public class VariantController {
                 requestDto.productId()
         );
         return ResponseEntity.created(URI.create("/variants/" + variant.variantId().value()))
-                .body(
-                        VariantResponseDto.fromDomain(variant)
-                );
+                .body(VariantResponseDto.fromDomain(variant));
     }
 
     @DeleteMapping("/{id}")
