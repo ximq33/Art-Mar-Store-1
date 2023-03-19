@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service
@@ -35,5 +36,44 @@ public class VariantService {
         }
         throw new alreadyExistsException("Same variant already exists");
     }
+
+    public void deleteVariantById(VariantId variantId) {
+        variantRepository.deleteById(variantId);
+    }
+
+    public Optional<Variant> getVariantById(String id){
+        return variantRepository.findById(new VariantId(id));
+    }
+
+    public Optional<Variant> updateVariant(
+            String variantId,
+            Optional<BigDecimal> priceUpdate,
+            Optional<Integer> quantityUpdate,
+            Optional<Boolean> disabledUpdate,
+            Optional<String> imgPathUpdate,
+            Optional<String> manufacturerUpdate,
+            Optional<Color> colorUpdate,
+            Optional<String> sideUpdate,
+            Optional<String> patternUpdate,
+            Optional<String> productIdUpdate
+    ){
+        Optional<ProductId> productIdOpt = productIdUpdate.map(ProductId::new);
+        return variantRepository.findById(new VariantId(variantId))
+                .map(oldVariant ->
+                        new Variant(new VariantId(variantId),
+                                priceUpdate.orElseGet(oldVariant::price),
+                                quantityUpdate.orElseGet(oldVariant::quantity),
+                                disabledUpdate.orElseGet(oldVariant::disabled),
+                                imgPathUpdate.orElseGet(oldVariant::imgPath),
+                                manufacturerUpdate.orElseGet(oldVariant::manufacturer),
+                                colorUpdate.orElseGet(oldVariant::color),
+                                sideUpdate.orElseGet(oldVariant::side),
+                                patternUpdate.orElseGet(oldVariant::pattern),
+                                productIdOpt.orElseGet(oldVariant::productId)
+                        )
+                )
+                .map(variantRepository::save);
+    }
+
 
 }
