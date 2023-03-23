@@ -37,16 +37,26 @@ public class ProductService {
 
         String manufacturer = findById(id).get().manufacturer();
 
-
         List<Product> list = productRepository.findAll();
         List<Product> sameManufacturers = new ArrayList<>();
 
         for (Product p: list) {
-            if(Objects.equals(p.manufacturer(), manufacturer) && p.productId()!=id ){
+            if(p.manufacturer().equals(manufacturer) && !p.productId().value().equals(id.value())){
                 sameManufacturers.add(p);
             }
         }
         return sameManufacturers;
+    }
+
+    private List<Product> findWithoutManufacturer(String manufacturer) {
+        List<Product> allProducts = productRepository.findAll();
+        List<Product> productsWithoutManufacturer = new ArrayList<>();
+        for(Product p : allProducts) {
+            if(!p.manufacturer().equals(manufacturer)) {
+                productsWithoutManufacturer.add(p);
+            }
+        }
+        return productsWithoutManufacturer;
     }
 
     public Optional<Product> updateProduct(ProductId id,
@@ -70,15 +80,16 @@ public class ProductService {
 
     public List<Product> findRelatedOrRandom(ProductId id) {
         List<Product> sameManufacturers = findWithSameManufacturer(id);
-        List<Product> products = productRepository.findAll();
+        List<Product> products = findWithoutManufacturer(findById(id).get().manufacturer());
         String productManufacturer = findById(id).get().manufacturer();
         Random random = new Random();
         int max = sameManufacturers.size();
+        System.out.println(max);
         int randomNumber;
 
         List<Product> readyResponse = new ArrayList<>();
 
-        while(readyResponse.size() !=4 ) {
+        while(readyResponse.size() !=4 || products.size() == 0 ) {
             if(max == 0) {
                 int newMax = products.size();
                 randomNumber = random.nextInt(newMax);
