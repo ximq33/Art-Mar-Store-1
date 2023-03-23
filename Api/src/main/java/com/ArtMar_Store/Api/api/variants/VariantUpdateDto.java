@@ -3,25 +3,30 @@ package com.ArtMar_Store.Api.api.variants;
 import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.variants.Color;
 import com.ArtMar_Store.Api.domain.variants.Variant;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public class VariantUpdateDto{
+class VariantUpdateDto{
         @Positive(message = "price has to be positive")
         BigDecimal price;
         @PositiveOrZero(message = "quantity cannot be negative")
         int quantity;
         boolean disabled;
         String imgPath;
-        @NotEmpty(message = "manufacturer cannot be empty")
+        @Length(min = 1, max = 100)
         String manufacturer;
         Color color;
+        @Length(min = 1, max = 100)
         String side;
+        @Length(min = 1, max = 100)
         String pattern;
+        @Length(min = 1, max = 100)
         String productId;
 
         public Optional<BigDecimal> getPrice() {
