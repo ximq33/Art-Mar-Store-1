@@ -57,11 +57,20 @@ class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.DELETE).hasAnyAuthority("SCOPE_ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/products/**").hasAnyAuthority("SCOPE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/products/**").anonymous()
+
                         .requestMatchers(HttpMethod.POST, "/variants/**").hasAnyAuthority("SCOPE_ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/variants/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/users/**").anonymous()
+                        .requestMatchers(HttpMethod.GET,"/variants/**").anonymous()
+
+                        .requestMatchers(HttpMethod.POST,"/users").anonymous()
+                        .requestMatchers(HttpMethod.GET,"/users").hasAnyAuthority("SCOPE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_USER", "SCOPE_ADMIN")
+
                         .anyRequest()
                         .authenticated()
                 )
@@ -102,5 +111,4 @@ class SecurityConfig {
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
 }
