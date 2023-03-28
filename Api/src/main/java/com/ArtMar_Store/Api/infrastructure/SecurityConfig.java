@@ -69,7 +69,8 @@ class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST,"/users").anonymous()
                         .requestMatchers(HttpMethod.GET,"/users").hasAnyAuthority("SCOPE_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_USER", "SCOPE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
 
                         .anyRequest()
                         .authenticated()
