@@ -8,7 +8,14 @@ logging:
 spring:
   mvc:
     log-request-details: true
+  servlet:
+    multipart:
+      enabled: true
 
 jwt:
   private.key: classpath:app.key
   public.key: classpath:app.pub
+
+file:
+  upload-dir: /Users/ximon/Desktop/Spring/Art-Mar-Store/Api/src/main/resources/uploads
+
