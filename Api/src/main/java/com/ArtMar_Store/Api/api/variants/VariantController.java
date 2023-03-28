@@ -67,8 +67,9 @@ public class VariantController {
     @PatchMapping("/{id}")
     ResponseEntity<VariantResponseDto> updateVariant(@PathVariable String id, @Valid @RequestBody VariantUpdateDto updateDto){
 
+        System.out.println(updateDto);
         return ResponseEntity.of(variantService.updateVariant(id, updateDto.getPrice(), updateDto.getQuantity(), updateDto.isDisabled(),
-                updateDto.getImgPath(), updateDto.getManufacturer(), updateDto.getColor(), updateDto.getSide(), updateDto.getPattern(),
+                updateDto.getImgPath(), updateDto.getManufacturer(), updateDto.getColorName(), updateDto.getRGBvalue(), updateDto.getSide(), updateDto.getPattern(),
                 updateDto.getProductId()).map(VariantResponseDto::fromDomain));
     }
 

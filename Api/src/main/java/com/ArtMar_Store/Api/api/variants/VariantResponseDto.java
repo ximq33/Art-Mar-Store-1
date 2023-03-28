@@ -8,11 +8,12 @@ import java.math.BigDecimal;
 
 record VariantResponseDto(String variantId,
                           BigDecimal price,
-                          int quantity,
+                          Integer quantity,
                           boolean disabled,
                           String imgPath,
                           String manufacturer,
-                          Color color,
+                          String colorName,
+                          String RGBvalue,
                           String side,
                           String pattern,
                           ProductId productId
@@ -21,7 +22,7 @@ record VariantResponseDto(String variantId,
     public static VariantResponseDto fromDomain(Variant variant) {
         return new VariantResponseDto(variant.variantId().value(), variant.price(),
                 variant.quantity(), variant.disabled(), variant.imgPath(), variant.manufacturer(),
-                variant.color(), variant.side(), variant.pattern(), variant.productId());
+                variant.color().colorName(), variant.color().RGBvalue(), variant.side(), variant.pattern(), variant.productId());
 
     }
 }

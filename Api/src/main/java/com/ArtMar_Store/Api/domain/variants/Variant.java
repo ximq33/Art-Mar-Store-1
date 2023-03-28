@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 @Document
 public record Variant(@Id VariantId variantId,
                       BigDecimal price,
-                      int quantity,
-                      boolean disabled,
+                      Integer quantity,
+                      Boolean disabled,
                       String imgPath,
                       String manufacturer,
                       Color color,
