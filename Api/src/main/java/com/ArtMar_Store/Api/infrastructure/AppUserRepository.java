@@ -1,5 +1,6 @@
 package com.ArtMar_Store.Api.infrastructure;
 
+import com.ArtMar_Store.Api.api.users.UserResponseDto;
 import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.UserId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -13,5 +14,13 @@ public interface AppUserRepository extends MongoRepository<AppUser, UserId> {
 
     Optional<AppUser> findAppUserByEmail(String email);
 
-    UserDetails findAppUserByName(String username);
+
+    UserDetails findUserDetailsByName(String username);
+
+
+    Optional<AppUser> findAppUserByName(String name);
+
+    Optional<AppUser> findAppUserByUserId(UserId userId);
+
+
 }
