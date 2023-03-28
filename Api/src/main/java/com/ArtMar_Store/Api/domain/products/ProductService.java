@@ -18,20 +18,24 @@ public class ProductService {
     private final Supplier<ProductId> productIdSupplier;
 
 
-    public ProductService(ProductRepository productRepository, VariantRepository variantRepository, Supplier<ProductId> productIdSupplier) {
+    ProductService(ProductRepository productRepository, VariantRepository variantRepository, Supplier<ProductId> productIdSupplier) {
         this.productRepository = productRepository;
         this.variantRepository = variantRepository;
         this.productIdSupplier = productIdSupplier;
     }
 
-    public List<Product> getProductList() {return productRepository.findAll();}
+    public List<Product> getProductList() {
+        return productRepository.findAll();
+    }
 
     public void deleteProduct(ProductId id) {
         productRepository.findById(id)
-                .ifPresent(s->productRepository.deleteById(s.productId()));
+                .ifPresent(s -> productRepository.deleteById(s.productId()));
     }
 
-    public Optional<Product> findById(ProductId id) {return productRepository.findById(id);}
+    public Optional<Product> findById(ProductId id) {
+        return productRepository.findById(id);
+    }
 
     private List<Product> findWithSameManufacturer(ProductId id) {
 
@@ -40,8 +44,8 @@ public class ProductService {
         List<Product> list = productRepository.findAll();
         List<Product> sameManufacturers = new ArrayList<>();
 
-        for (Product p: list) {
-            if(p.manufacturer().equals(manufacturer) && !p.productId().value().equals(id.value())){
+        for (Product p : list) {
+            if (p.manufacturer().equals(manufacturer) && !p.productId().value().equals(id.value())) {
                 sameManufacturers.add(p);
             }
         }
@@ -51,8 +55,8 @@ public class ProductService {
     private List<Product> findWithoutManufacturer(String manufacturer) {
         List<Product> allProducts = productRepository.findAll();
         List<Product> productsWithoutManufacturer = new ArrayList<>();
-        for(Product p : allProducts) {
-            if(!p.manufacturer().equals(manufacturer)) {
+        for (Product p : allProducts) {
+            if (!p.manufacturer().equals(manufacturer)) {
                 productsWithoutManufacturer.add(p);
             }
         }
@@ -63,17 +67,16 @@ public class ProductService {
                                            Optional<String> name,
                                            Optional<String> manufacturer,
                                            Optional<BigDecimal> price,
-                                           Optional<String> description)
-    {
+                                           Optional<String> description) {
         productRepository.findById(id)
                 .map(productFromRepository ->
-                    new Product(id,
-                            name.orElse(productFromRepository.name()),
-                            manufacturer.orElse(productFromRepository.manufacturer()),
-                            productFromRepository.variants(),
-                            price.orElse(productFromRepository.price()),
-                            productFromRepository.imgPath(),
-                            description.orElse(productFromRepository.description()))
+                        new Product(id,
+                                name.orElse(productFromRepository.name()),
+                                manufacturer.orElse(productFromRepository.manufacturer()),
+                                productFromRepository.variants(),
+                                price.orElse(productFromRepository.price()),
+                                productFromRepository.imgPath(),
+                                description.orElse(productFromRepository.description()))
                 ).ifPresent(productRepository::save);
         return productRepository.findById(id);
     }
@@ -89,20 +92,16 @@ public class ProductService {
 
         List<Product> readyResponse = new ArrayList<>();
 
-        while(readyResponse.size() !=4 || products.size() == 0 ) {
-            if(max == 0) {
+        while (readyResponse.size() != 4 || products.size() == 0) {
+            if (max == 0) {
                 int newMax = products.size();
                 randomNumber = random.nextInt(newMax);
-                if(Objects.equals(products.get(randomNumber).manufacturer(), productManufacturer ))
-                {
+                if (Objects.equals(products.get(randomNumber).manufacturer(), productManufacturer)) {
                     products.remove(randomNumber);
-                }
-                else {
+                } else {
                     readyResponse.add(products.get(randomNumber));
                 }
-
-
-            } else if (max>0) {
+            } else {
                 randomNumber = random.nextInt(max);
                 readyResponse.add(sameManufacturers.get(randomNumber));
                 sameManufacturers.remove(randomNumber);
@@ -113,12 +112,12 @@ public class ProductService {
         return readyResponse;
 
     }
+
     public Product registerNewProduct(String name, String manufacturer, BigDecimal price, String imgPath, String description) {
 
-        if(!productRepository.existsByNameAndManufacturer(name,manufacturer)) {
+        if (!productRepository.existsByNameAndManufacturer(name, manufacturer)) {
             return productRepository.save(new Product(productIdSupplier.get(), name, manufacturer, new ArrayList<>(), price, imgPath, description));
-        }
-        else throw new alreadyExistsException("Product with same manufacturer already exists");
+        } else throw new alreadyExistsException("Product with same manufacturer and name already exists");
     }
 
 }

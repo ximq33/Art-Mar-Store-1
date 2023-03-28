@@ -2,12 +2,15 @@ package com.ArtMar_Store.Api.api.variants;
 
 import com.ArtMar_Store.Api.api.products.ErrorDTO;
 import com.ArtMar_Store.Api.domain.products.*;
+import com.ArtMar_Store.Api.domain.users.Role;
 import com.ArtMar_Store.Api.domain.variants.Variant;
 import com.ArtMar_Store.Api.domain.variants.VariantId;
 import com.ArtMar_Store.Api.domain.variants.VariantService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -21,11 +24,11 @@ import static com.ArtMar_Store.Api.api.variants.VariantController.variant_baseUR
 
 @RestController
 @RequestMapping(variant_baseURL)
-public class VariantController {
+class VariantController {
 
     private final VariantService variantService;
 
-    public VariantController(VariantService variantService) {
+    VariantController(VariantService variantService) {
         this.variantService = variantService;
     }
 
@@ -40,6 +43,7 @@ public class VariantController {
     }
 
     @PostMapping
+    @RolesAllowed("ADMIN")
     ResponseEntity<VariantResponseDto> registerNewVariant(
             @RequestBody VariantRequestDto requestDto
     ) {
@@ -59,7 +63,8 @@ public class VariantController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<VariantResponseDto> deleteVariant(@PathVariable String id){
+    ResponseEntity<VariantResponseDto> deleteVariant(Authentication authentication,
+                                                     @PathVariable String id){
         variantService.deleteVariantById(new VariantId(id));
         return ResponseEntity.noContent().build();
     }
