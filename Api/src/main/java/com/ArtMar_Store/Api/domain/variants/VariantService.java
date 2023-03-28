@@ -1,5 +1,6 @@
 package com.ArtMar_Store.Api.domain.variants;
 
+import com.ArtMar_Store.Api.api.variants.ColorUpdateDto;
 import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.products.alreadyExistsException;
 import com.ArtMar_Store.Api.infrastructure.VariantRepository;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @Service
 public class VariantService {
@@ -52,12 +54,16 @@ public class VariantService {
             Optional<Boolean> disabledUpdate,
             Optional<String> imgPathUpdate,
             Optional<String> manufacturerUpdate,
-            Optional<Color> colorUpdate,
+            Optional<String> colorNameUpdate,
+            Optional<String> RGBUpdate,
             Optional<String> sideUpdate,
             Optional<String> patternUpdate,
             Optional<String> productIdUpdate
     ){
+
         Optional<ProductId> productIdOpt = productIdUpdate.map(ProductId::new);
+
+
         return variantRepository.findById(new VariantId(variantId))
                 .map(oldVariant ->
                         new Variant(new VariantId(variantId),
@@ -66,7 +72,8 @@ public class VariantService {
                                 disabledUpdate.orElseGet(oldVariant::disabled),
                                 imgPathUpdate.orElseGet(oldVariant::imgPath),
                                 manufacturerUpdate.orElseGet(oldVariant::manufacturer),
-                                colorUpdate.orElseGet(oldVariant::color),
+//                                colorUpdate.orElseGet(oldVariant::color),
+                                new Color(colorNameUpdate.orElse(oldVariant.color().colorName()), RGBUpdate.orElse(oldVariant.color().RGBvalue())),
                                 sideUpdate.orElseGet(oldVariant::side),
                                 patternUpdate.orElseGet(oldVariant::pattern),
                                 productIdOpt.orElseGet(oldVariant::productId)
