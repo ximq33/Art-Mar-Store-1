@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(ReservationController.reservation_baseURL)
-public class ReservationController {
+class ReservationController {
 
     private final ReservationService reservationService;
 
-    public ReservationController(ReservationService reservationService) {
+    ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
 

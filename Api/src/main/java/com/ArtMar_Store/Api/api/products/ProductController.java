@@ -16,11 +16,11 @@ import static com.ArtMar_Store.Api.api.products.ProductController.product_baseUR
 
 @RestController
 @RequestMapping(product_baseURL)
-public class ProductController {
+class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
+    ProductController(ProductService productService) {
         this.productService = productService;
     }
 
