@@ -1,7 +1,6 @@
 package com.ArtMar_Store.Api.infrastructure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @ConfigurationProperties(prefix = "file")
 public class FileStorageProperties {
