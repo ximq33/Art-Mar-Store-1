@@ -16,6 +16,7 @@ import static com.ArtMar_Store.Api.api.products.ProductController.product_baseUR
 
 @RestController
 @RequestMapping(product_baseURL)
+@CrossOrigin
 class ProductController {
 
     private final ProductService productService;
