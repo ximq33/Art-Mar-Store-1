@@ -1,70 +1,41 @@
 package com.ArtMar_Store.Api.domain.files;
 
-import com.ArtMar_Store.Api.infrastructure.FileStorageProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import com.ArtMar_Store.Api.infrastructure.FileStorageRepository;
+import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 @Service
 public class FileStorageService {
 
-    private final Path fileStorageLocation;
 
-    @Autowired
-    public FileStorageService(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
-                .toAbsolutePath().normalize();
+    private final FileStorageRepository fileStorageRepository;
+    private final Supplier<ImageId> imageIdSupplier;
 
-        try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
-        }
+
+    public FileStorageService(FileStorageRepository fileStorageRepository, Supplier<ImageId> imageIdSupplier) {
+        this.fileStorageRepository = fileStorageRepository;
+        this.imageIdSupplier = imageIdSupplier;
     }
 
-    public String storeFile(MultipartFile file) {
-        // Normalize file name
-//        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-        String fileName = UUID.randomUUID().toString() + ".webp";
-        try {
-            // Check if the file's name contains invalid characters
-            if(fileName.contains("..")) {
-                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            }
-
-            // Copy file to the target location (Replacing existing file with the same name)
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-            return fileName;
-        } catch (IOException ex) {
-            throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
-        }
+    public Image storeFile(MultipartFile file, String productId) throws IOException {
+        Binary binary = new Binary(file.getBytes());
+        Image image = new Image(imageIdSupplier.get(), binary, productId, ".webp");
+        return fileStorageRepository.save(image);
     }
 
-    public Resource loadFileAsResource(String fileName) {
-        try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if(resource.exists()) {
-                return resource;
-            } else {
-                throw new MyFileNotFoundException("File not found " + fileName);
-            }
-        } catch (MalformedURLException ex) {
-            throw new MyFileNotFoundException("File not found " + fileName, ex);
+
+    public List<ImageResponseDto> loadImagesByProductIds(List<String> productIds) {
+        List<ImageResponseDto> images = new ArrayList<>();
+        for (String s : productIds) {
+            images.add(ImageResponseDto.fromDomain(fileStorageRepository.getImagesByProductId(s)));
         }
+        return images;
     }
 }

@@ -12,13 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -72,10 +68,12 @@ class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/files/**").anonymous()
+
                         .anyRequest()
                         .authenticated()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/token", "/users", "/products"))
+                .csrf((csrf) -> csrf.ignoringRequestMatchers("/token", "/users", "/products", "/files"))
                 .cors().disable()
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

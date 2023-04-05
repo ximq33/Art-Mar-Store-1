@@ -5,11 +5,8 @@ import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.products.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ArtMar_Store.Api.api.products.ProductController.product_baseURL;
@@ -70,17 +67,6 @@ class ProductController {
                         .collect(Collectors.toList()));
     }
 
-    @PatchMapping("/{id}")
-    ResponseEntity<ProductResponseDto> editProduct(@PathVariable String id,
-                                                   @RequestBody ProductRequestDto productRequestDto) {
-        Optional<String> name = Optional.ofNullable(productRequestDto.name());
-        Optional<String> manufacturer = Optional.ofNullable(productRequestDto.manufacturer());
-        Optional<BigDecimal> price = Optional.ofNullable(productRequestDto.price());
-        Optional<String> description = Optional.ofNullable(productRequestDto.description());
-
-        return ResponseEntity.of(productService.updateProduct(new ProductId(id), name, manufacturer, price, description)
-                .map(ProductResponseDto::fromDomain));
-    }
 
 static final String product_baseURL = "/products";
 }
