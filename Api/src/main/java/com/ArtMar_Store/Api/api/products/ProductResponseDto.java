@@ -11,7 +11,7 @@ public record ProductResponseDto(
         BigDecimal price,
         String description) {
 
-    static ProductResponseDto fromDomain(Product product) {
+    public static ProductResponseDto fromDomain(Product product) {
         return new ProductResponseDto(
                 product.productId().value(),
                 product.name(),

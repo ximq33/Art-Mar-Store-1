@@ -3,7 +3,6 @@ package com.ArtMar_Store.Api.domain.products;
 import com.ArtMar_Store.Api.infrastructure.ProductRepository;
 import com.ArtMar_Store.Api.infrastructure.VariantRepository;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Supplier;
@@ -63,23 +62,23 @@ public class ProductService {
         return productsWithoutManufacturer;
     }
 
-    public Optional<Product> updateProduct(ProductId id,
-                                           Optional<String> name,
-                                           Optional<String> manufacturer,
-                                           Optional<BigDecimal> price,
-                                           Optional<String> description) {
-        productRepository.findById(id)
-                .map(productFromRepository ->
-                        new Product(id,
-                                name.orElse(productFromRepository.name()),
-                                manufacturer.orElse(productFromRepository.manufacturer()),
-                                productFromRepository.variants(),
-                                price.orElse(productFromRepository.price()),
-                                productFromRepository.imgPath(),
-                                description.orElse(productFromRepository.description()))
-                ).ifPresent(productRepository::save);
-        return productRepository.findById(id);
-    }
+//    public Optional<Product> updateProduct(ProductId id,
+//                                           Optional<String> name,
+//                                           Optional<String> manufacturer,
+//                                           Optional<BigDecimal> price,
+//                                           Optional<String> description) {
+//        productRepository.findById(id)
+//                .map(productFromRepository ->
+//                        new Product(id,
+//                                name.orElse(productFromRepository.name()),
+//                                manufacturer.orElse(productFromRepository.manufacturer()),
+//                                productFromRepository.variants(),
+//                                price.orElse(productFromRepository.price()),
+//                                productFromRepository.imgPath(),
+//                                description.orElse(productFromRepository.description()))
+//                ).ifPresent(productRepository::save);
+//        return productRepository.findById(id);
+//    }
 
     public List<Product> findRelatedOrRandom(ProductId id) {
         List<Product> sameManufacturers = findWithSameManufacturer(id);
@@ -112,6 +111,8 @@ public class ProductService {
         return readyResponse;
 
     }
+
+
 
     public Product registerNewProduct(String name, String manufacturer, BigDecimal price, String imgPath, String description) {
 
