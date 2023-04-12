@@ -4,7 +4,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import HomePage from "./components/HomePage/HomePage";
+import HomePage from "./components/Home/HomePage/HomePage";
 
 const router = createBrowserRouter([
     {

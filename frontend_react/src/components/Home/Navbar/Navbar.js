@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./Navbar.css";
-import logo from "../../resources/artmar-logo.webp"
+import logo from "../../../resources/artmar-logo.webp"
 const Navbar = () => (
     <div className="navbar-main">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -17,19 +17,19 @@ const Navbar = () => (
                     className="navbar-toggler-icon"></span></button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li className="nav-item"><a className="nav-link active" aria-current="page" href="#!">Home</a>
+                        <li className="nav-item"><a className="nav-link active" aria-current="page" href="src/components/Home/Navbar#!">Home</a>
                         </li>
-                        <li className="nav-item"><a className="nav-link" href="#!">About</a></li>
+                        <li className="nav-item"><a className="nav-link" href="src/components/Home/Navbar#!">About</a></li>
                         <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                            <a className="nav-link dropdown-toggle" id="navbarDropdown" href="src/components/Home/Navbar#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                             <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a className="dropdown-item" href="#!">All Products</a></li>
+                                <li><a className="dropdown-item" href="src/components/Home/Navbar#!">All Products</a></li>
                                 <li>
                                     <hr className="dropdown-divider"/>
                                 </li>
-                                <li><a className="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a className="dropdown-item" href="#!">New Arrivals</a></li>
+                                <li><a className="dropdown-item" href="src/components/Home/Navbar#!">Popular Items</a></li>
+                                <li><a className="dropdown-item" href="src/components/Home/Navbar#!">New Arrivals</a></li>
                             </ul>
                         </li>
                     </ul>
