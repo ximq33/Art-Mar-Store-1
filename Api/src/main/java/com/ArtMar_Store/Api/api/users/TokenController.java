@@ -3,11 +3,13 @@ package com.ArtMar_Store.Api.api.users;
 import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 class TokenController {
 
 
@@ -26,7 +29,7 @@ class TokenController {
     JwtEncoder encoder;
 
     @PostMapping("/token")
-    public String token(Authentication authentication) {
+    public ResponseEntity<Token> token(Authentication authentication) {
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
 
@@ -45,6 +48,6 @@ class TokenController {
                 .claim("scope", authorities)
                 .claim("userId", appUser.userId())
                 .build();
-        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return ResponseEntity.ok(Token.newOf(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue()));
     }
 }
