@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -63,10 +64,10 @@ class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products/**").anonymous()
 
                         .requestMatchers(HttpMethod.POST, "/variants/**").hasAnyAuthority("SCOPE_ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/variants/**").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/variants/**").anonymous()
 
-                        .requestMatchers(HttpMethod.POST,"/users").anonymous()
-                        .requestMatchers(HttpMethod.GET,"/users").hasAnyAuthority("SCOPE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("SCOPE_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
 
@@ -76,21 +77,20 @@ class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/token", "/users", "/products", "/files"))
-
+                .csrf((csrf) -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/token", HttpMethod.POST.name()),
+                        new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
+                        new AntPathRequestMatcher("/products", HttpMethod.GET.name())))
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling((exceptions) -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                )
-                ;
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
         return http.build();
     }
 
     @Bean
-    UserDetailsService users(){
+    UserDetailsService users() {
         return userService::findByUserName;
     }
 
