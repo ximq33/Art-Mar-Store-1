@@ -1,23 +1,24 @@
 // @flow
-import React, { useEffect } from 'react';
-import { Button, Alert, Row, Col } from 'react-bootstrap';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Alert, Button, Col, Row} from 'react-bootstrap';
+import {Link, Navigate, useLocation} from 'react-router-dom';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {useTranslation} from 'react-i18next';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUser} from '../../utils/ApiCalls';
 
 //actions
-import { resetAuth, loginUser } from '../../redux/actions';
+import {loginUser, resetAuth} from '../../redux/actions';
 
 // components
-import { VerticalForm, FormInput } from '../../components/';
+import {FormInput, VerticalForm} from '../../components/';
 
 import AccountLayout from './AccountLayout';
 
 /* bottom link of account pages */
 const BottomLink = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     return (
         <Row className="mt-3">
@@ -34,17 +35,18 @@ const BottomLink = () => {
 };
 
 const Login = (): React$Element<any> => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const dispatch = useDispatch();
+    const [authority, setAuthority] = useState(null);
 
     const location = useLocation();
-    const redirectUrl = location.state && location.state.from ? location.state.from.pathname : '/';
+    const [redirectUrl, setRedirectUrl] = useState(null);
 
     useEffect(() => {
         dispatch(resetAuth());
     }, [dispatch]);
 
-    const { loading, userLoggedIn, user, error } = useSelector((state) => ({
+    const {loading, userLoggedIn, user, error} = useSelector((state) => ({
         loading: state.Auth.loading,
         user: state.Auth.user,
         error: state.Auth.error,
@@ -67,13 +69,45 @@ const Login = (): React$Element<any> => {
     const onSubmit = (formData) => {
         dispatch(loginUser(formData['username'], formData['password']));
         console.log(error);
+
+        fetch(process.env.REACT_APP_API_URL + "token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Basic ' + btoa(formData['username'] + ':' + formData['password'])
+            }
+        })
+            .then((response) => {
+                console.log(response);
+                if (response.ok) {
+                    response.json()
+                        .then((data) => {
+                            getUser(data.value)
+                                .then(r => r.json()
+                                    .then(r => {
+                                        if (r.authorities[0].authority === "ADMIN") {
+                                            setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : 'ecommerce/dashboard')
+                                            setAuthority(r.authorities[0].authority);
+                                        } else
+                                            setRedirectUrl(process.env.REACT_APP_STORE_URL);
+                                            setAuthority(r.authorities[0].authority);
+                                    }));
+                        });
+                } else {
+                    console.log('Error:', response.statusText);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     };
+
 
     return (
         <>
-            {(userLoggedIn || user) && <Navigate to={redirectUrl} replace />}
+            {(authority) && <Navigate to={redirectUrl} replace/>}
 
-            <AccountLayout bottomLinks={<BottomLink />}>
+            <AccountLayout bottomLinks={<BottomLink/>}>
                 <div className="text-center w-75 m-auto">
                     <h4 className="text-dark-50 text-center mt-0 fw-bold">{t('Sign In')}</h4>
                     <p className="text-muted mb-4">
@@ -90,7 +124,7 @@ const Login = (): React$Element<any> => {
                 <VerticalForm
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ username: 'test', password: 'test' }}>
+                    defaultValues={{username: 'test', password: 'test'}}>
                     <FormInput
                         label={t('Username')}
                         type="text"

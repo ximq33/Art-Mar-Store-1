@@ -70,7 +70,7 @@ const Register = (): React$Element<React$FragmentType> => {
             setErr(response.message);
           });
         } else
-          window.location.href = "http://localhost:3000/account/login";
+          window.location.href = process.env.REACT_APP_BASE_URL + "account/login";
         // handle successful response
 
       });
