@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Artmar - store.iml" filepath="$PROJECT_DIR$/.idea/Artmar - store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admin-react-js/admin-react-js.iml" filepath="$PROJECT_DIR$/admin-react-js/admin-react-js.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend_react/frontend_react.iml" filepath="$PROJECT_DIR$/frontend_react/frontend_react.iml" />
     </modules>
   </component>
