@@ -57,6 +57,9 @@ class SecurityConfig {
 
                 .cors()
                 .and()
+                .csrf((csrf) -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/token", HttpMethod.POST.name()),
+                        new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
+                        new AntPathRequestMatcher("/products", HttpMethod.GET.name())))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.DELETE).hasAnyAuthority("SCOPE_ADMIN")
 
@@ -71,15 +74,11 @@ class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
 
-
                         .requestMatchers(HttpMethod.GET, "/files/**").anonymous()
 
                         .anyRequest()
                         .authenticated()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/token", HttpMethod.POST.name()),
-                        new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
-                        new AntPathRequestMatcher("/products", HttpMethod.GET.name())))
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
