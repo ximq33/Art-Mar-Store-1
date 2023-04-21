@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import PropTypes from 'prop-types';
 import "./Products.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import img from "../../../resources/img.png"

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 const Header = () => (
      <header className="bg-dark py-5">

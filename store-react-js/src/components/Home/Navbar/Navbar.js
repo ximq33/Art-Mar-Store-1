@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./Navbar.css";
 import logo from "../../../resources/artmar-logo.webp"
