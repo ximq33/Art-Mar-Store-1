@@ -7,6 +7,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +42,9 @@ public class AppUserService {
     }
 
     public AppUser registerNewUser(UserRequestDto userRequestDto) {
+        if (appUserRepository.existsAccountByEmail(userRequestDto.email())){
+            throw new UnableToRegisterException("Użytkownik z podanym e-mailem już istnieje");
+        }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return appUserRepository.save(new AppUser(userIdSupplier.get(),
                 userRequestDto.name(),
@@ -64,5 +68,10 @@ public class AppUserService {
 
     public Optional<UserResponseDto> findAppUserByUserId(String userId) {
         return appUserRepository.findAppUserByUserId(UserId.newId(userId)).map(UserResponseDto::fromDomain);
+    }
+
+    public AppUser mapJwtToUser(Jwt jwt){
+        String id = jwt.getClaim("userId").toString();
+        return appUserRepository.findAppUserByUserId(UserId.newId(id)).get();
     }
 }

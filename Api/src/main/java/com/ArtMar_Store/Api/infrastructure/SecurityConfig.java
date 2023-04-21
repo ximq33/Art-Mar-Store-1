@@ -54,6 +54,8 @@ class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
 
+                .cors()
+                .and()
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.DELETE).hasAnyAuthority("SCOPE_ADMIN")
 
@@ -68,20 +70,22 @@ class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
 
+
                         .requestMatchers(HttpMethod.GET, "/files/**").anonymous()
 
                         .anyRequest()
                         .authenticated()
                 )
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/token", "/users", "/products", "/files"))
-                .cors().disable()
+
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling((exceptions) -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+                )
+                ;
         return http.build();
     }
 
