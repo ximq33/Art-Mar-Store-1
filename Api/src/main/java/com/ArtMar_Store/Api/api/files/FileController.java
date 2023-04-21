@@ -1,11 +1,8 @@
 package com.ArtMar_Store.Api.api.files;
 
-import com.ArtMar_Store.Api.api.products.ProductResponseDto;
 import com.ArtMar_Store.Api.domain.files.FileStorageService;
 import com.ArtMar_Store.Api.domain.files.Image;
 import com.ArtMar_Store.Api.domain.files.ImageResponseDto;
-import com.ArtMar_Store.Api.domain.products.Product;
-import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.products.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

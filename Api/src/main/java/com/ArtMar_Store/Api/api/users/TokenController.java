@@ -1,5 +1,6 @@
 package com.ArtMar_Store.Api.api.users;
 
+import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,9 @@ class TokenController {
     @PostMapping("/token")
     public String token(Authentication authentication) {
 
+        AppUser appUser = (AppUser) authentication.getPrincipal();
+
+
 
         Instant now = Instant.now();
         long expiry = 1800L;
@@ -43,6 +47,7 @@ class TokenController {
                 .expiresAt(now.plusSeconds(expiry))
                 .subject(authentication.getName())
                 .claim("scope", authorities)
+                .claim("userId", appUser.userId())
                 .build();
         // @formatter:on
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
