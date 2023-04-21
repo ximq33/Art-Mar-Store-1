@@ -18,13 +18,11 @@ import java.util.stream.Collectors;
 @RestController
 class TokenController {
 
-    private final AppUserService service;
 
-    public TokenController(AppUserService service) {
-        this.service = service;
+    public TokenController(JwtEncoder encoder) {
+        this.encoder = encoder;
     }
 
-    @Autowired
     JwtEncoder encoder;
 
     @PostMapping("/token")
@@ -33,10 +31,8 @@ class TokenController {
         AppUser appUser = (AppUser) authentication.getPrincipal();
 
 
-
         Instant now = Instant.now();
         long expiry = 1800L;
-        // @formatter:off
         Collection<String> authorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
@@ -49,7 +45,6 @@ class TokenController {
                 .claim("scope", authorities)
                 .claim("userId", appUser.userId())
                 .build();
-        // @formatter:on
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 }
