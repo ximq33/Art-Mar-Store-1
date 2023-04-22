@@ -87,9 +87,9 @@ const Login = (): React$Element<any> => {
                                     .then(r => {
                                         if (r.authorities[0].authority === "ADMIN") {
                                             setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : 'ecommerce/dashboard')
-                                            setAuthority(r.authorities[0].authority);
-                                        } else
+                                        } else {
                                             setRedirectUrl(process.env.REACT_APP_STORE_URL);
+                                        }
                                             setAuthority(r.authorities[0].authority);
                                     }));
                         });

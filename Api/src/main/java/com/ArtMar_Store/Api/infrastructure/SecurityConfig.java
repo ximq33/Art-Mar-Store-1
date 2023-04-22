@@ -60,6 +60,7 @@ class SecurityConfig {
                 .csrf((csrf) -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/token", HttpMethod.POST.name()),
                         new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
                         new AntPathRequestMatcher("/products", HttpMethod.GET.name())))
+
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.DELETE).hasAnyAuthority("SCOPE_ADMIN")
 
