@@ -2,7 +2,9 @@ package com.ArtMar_Store.Api.api.users;
 
 import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.AppUserService;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,6 +50,10 @@ class TokenController {
                 .claim("scope", authorities)
                 .claim("userId", appUser.userId())
                 .build();
-        return ResponseEntity.ok(Token.newOf(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue()));
+        String token = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        String cookieString = String.format("%s=%s; HttpOnly", cookie.getName(), cookie.getValue());
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookieString).build();
     }
 }
