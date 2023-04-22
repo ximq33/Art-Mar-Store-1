@@ -1,6 +1,7 @@
 package com.ArtMar_Store.Api.infrastructure;
 
 import com.ArtMar_Store.Api.domain.files.ImageId;
+import com.ArtMar_Store.Api.domain.notification.NotificationId;
 import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.reservations.ReservationId;
 import com.ArtMar_Store.Api.domain.users.UserId;
@@ -31,5 +32,10 @@ public class IdSupplierConfig {
     @Bean
     public Supplier<ImageId> imageIdSupplier(){
         return () -> new ImageId(UUID.randomUUID().toString());
+    }
+
+    @Bean
+    public Supplier<NotificationId> notificationIdSupplier(){
+        return () -> new NotificationId(UUID.randomUUID().toString());
     }
 }
