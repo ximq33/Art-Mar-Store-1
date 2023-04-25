@@ -6,7 +6,8 @@ import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useTranslation} from 'react-i18next';
 import {useDispatch, useSelector} from 'react-redux';
-import {getUser} from '../../utils/ApiCalls';
+
+import {getUser, getCookie} from '../../utils/ApiCalls';
 
 //actions
 import {loginUser, resetAuth} from '../../redux/actions';
@@ -67,8 +68,6 @@ const Login = (): React$Element<any> => {
     handle form submission
     */
     const onSubmit = (formData) => {
-        dispatch(loginUser(formData['username'], formData['password']));
-        console.log(error);
 
         fetch(process.env.REACT_APP_API_URL + "token", {
             method: "POST",
@@ -78,21 +77,17 @@ const Login = (): React$Element<any> => {
             }
         })
             .then((response) => {
-                console.log(response);
                 if (response.ok) {
-                    response.json()
-                        .then((data) => {
-                            getUser(data.value)
-                                .then(r => r.json()
-                                    .then(r => {
-                                        if (r.authorities[0].authority === "ADMIN") {
-                                            setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : 'ecommerce/dashboard')
-                                        } else {
-                                            setRedirectUrl(process.env.REACT_APP_STORE_URL);
-                                        }
-                                            setAuthority(r.authorities[0].authority);
-                                    }));
-                        });
+                    getUser()
+                        .then(r => r.json()
+                            .then(r => {
+                                if (r.authorities[0].authority === "ADMIN") {
+                                    setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : 'ecommerce/dashboard')
+                                } else {
+                                    setRedirectUrl(process.env.REACT_APP_STORE_URL);
+                                }
+                                setAuthority(r.authorities[0].authority);
+                            }));
                 } else {
                     console.log('Error:', response.statusText);
                 }

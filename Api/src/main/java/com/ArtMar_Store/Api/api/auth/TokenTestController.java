@@ -1,4 +1,4 @@
-package com.ArtMar_Store.Api.api.users;
+package com.ArtMar_Store.Api.api.auth;
 
 import com.ArtMar_Store.Api.domain.users.AppUserService;
 import org.springframework.security.core.Authentication;

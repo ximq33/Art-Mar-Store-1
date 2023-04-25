@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @EnableConfigurationProperties({
 		FileStorageProperties.class
 })
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ApiApplication {
 
 	public static void main(String[] args) {

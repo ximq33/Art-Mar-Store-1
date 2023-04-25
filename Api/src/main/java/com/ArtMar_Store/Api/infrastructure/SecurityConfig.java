@@ -26,6 +26,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.security.interfaces.RSAPrivateKey;
@@ -35,9 +37,11 @@ import java.security.interfaces.RSAPublicKey;
 class SecurityConfig {
 
     private final AppUserService userService;
+    private final CookieAuthenticationFilter cookieAuthenticationFilter;
 
-    public SecurityConfig(AppUserService userService) {
+    public SecurityConfig(AppUserService userService, CookieAuthenticationFilter cookieAuthenticationFilter) {
         this.userService = userService;
+        this.cookieAuthenticationFilter = cookieAuthenticationFilter;
     }
 
     @Bean
@@ -64,13 +68,14 @@ class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.DELETE).hasAnyAuthority("SCOPE_ADMIN")
 
+                        .requestMatchers(HttpMethod.POST, "/token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/products/**").hasAnyAuthority("SCOPE_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/products/**").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/variants/**").hasAnyAuthority("SCOPE_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/variants/**").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/variants/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/users").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("SCOPE_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
@@ -80,6 +85,7 @@ class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
+                .addFilterAfter(cookieAuthenticationFilter, BasicAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

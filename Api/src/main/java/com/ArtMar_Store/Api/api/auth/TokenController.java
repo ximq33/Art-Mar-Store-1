@@ -1,13 +1,13 @@
-package com.ArtMar_Store.Api.api.users;
+package com.ArtMar_Store.Api.api.auth;
 
+import com.ArtMar_Store.Api.api.auth.Token;
 import com.ArtMar_Store.Api.domain.users.AppUser;
-import com.ArtMar_Store.Api.domain.users.AppUserService;
 import jakarta.servlet.http.Cookie;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,16 +28,23 @@ import java.util.stream.Collectors;
 class TokenController {
 
 
-    public TokenController(JwtEncoder encoder) {
+    private final FingerprintService fingerprintService;
+
+    public TokenController(FingerprintService fingerprintService, JwtEncoder encoder) {
+        this.fingerprintService = fingerprintService;
         this.encoder = encoder;
     }
 
     JwtEncoder encoder;
 
     @PostMapping("/token")
-    public ResponseEntity<Token> token(Authentication authentication) {
+    public ResponseEntity<String> token(Authentication authentication) throws NoSuchAlgorithmException {
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
+        Fingerprint fingerprint =  fingerprintService.getFingerprint(appUser.userId());
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        messageDigest.update(fingerprint.value().getBytes());
+        String stringHash = Arrays.toString(messageDigest.digest());
 
 
         Instant now = Instant.now();
@@ -49,11 +60,13 @@ class TokenController {
                 .subject(authentication.getName())
                 .claim("scope", authorities)
                 .claim("userId", appUser.userId())
+                .claim("fingerprint", stringHash)
                 .build();
         String token = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        Cookie cookie = new Cookie("token", token);
+        Cookie cookie = new Cookie("userFingerprint", fingerprint.value());
         cookie.setHttpOnly(true);
+        //cookie.setSecure(true);      before deploy to the same domain uncomment
         String cookieString = String.format("%s=%s; HttpOnly", cookie.getName(), cookie.getValue());
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookieString).build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookieString).body(token);
     }
 }
