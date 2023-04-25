@@ -33,6 +33,7 @@ class UserController {
     @PostMapping
     ResponseEntity<UserResponseDto> registerNewUser(
           @Valid @RequestBody UserRequestDto userRequestDto) {
+        System.out.println("halo");
         AppUser user = userService.registerNewUser(userRequestDto);
 
         return ResponseEntity.ok(UserResponseDto.fromDomain(user));

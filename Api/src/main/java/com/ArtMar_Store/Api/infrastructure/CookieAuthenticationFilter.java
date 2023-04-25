@@ -1,5 +1,6 @@
 package com.ArtMar_Store.Api.infrastructure;
 
+import com.ArtMar_Store.Api.api.auth.Fingerprint;
 import com.ArtMar_Store.Api.api.auth.FingerprintService;
 import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.UserId;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component
-public class CookieAuthenticationFilter extends OncePerRequestFilter{
+public class CookieAuthenticationFilter extends OncePerRequestFilter {
 
     private final FingerprintService fingerprintService;
 
@@ -31,35 +32,47 @@ public class CookieAuthenticationFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId;
-        boolean isBasic = false;
+        if (authentication == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String userIdString;
         try {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             Map<String, Object> claims = jwt.getClaims();
-            userId = ((Map<String, String>) claims.get("userId")).get("value");
-        }
-        catch (ClassCastException e) {
-            AppUser appUser = (AppUser) authentication.getPrincipal();
-            userId = appUser.userId().value();
-            isBasic = true;
+            userIdString = ((Map<String, String>) claims.get("userId")).get("value");
+        } catch (ClassCastException e) {
+            filterChain.doFilter(request, response);
+            return;
         }
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals("userFingerprint")) {
                     String cookieValue = cookie.getValue();
                     if (cookieValue != null && !cookieValue.isBlank()) {
-                        String repositoryFingerprint = fingerprintService.getFingerprint(new UserId(userId)).value();
+                        UserId userId = new UserId(userIdString);
+                        String repositoryFingerprint = fingerprintService.getFingerprint(userId).value();
                         if (!cookieValue.equals(repositoryFingerprint)) {
                             // The fingerprint in the cookie does not match the one in the repository
                             // Set HTTP status code 401 (Unauthorized) and return immediately
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             return;
                         }
+
+                        //Generate new fingerprint and set it as a response cookie
+                        fingerprintService.newFingerprint(userId);
+                        Fingerprint fingerprint = fingerprintService.getFingerprint(userId);
+                        Cookie newCookie = new Cookie("userFingerprint", fingerprint.value());
+                        newCookie.setHttpOnly(true);
+                        newCookie.setMaxAge(1800);
+
+                        response.addCookie(newCookie);
                     }
                     break;
                 }
             }
-        } else if (!isBasic) {
+        } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
