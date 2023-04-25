@@ -65,6 +65,7 @@ class TokenController {
         String token = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
         Cookie cookie = new Cookie("userFingerprint", fingerprint.value());
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(1800);
         //cookie.setSecure(true);      before deploy to the same domain uncomment
         String cookieString = String.format("%s=%s; HttpOnly", cookie.getName(), cookie.getValue());
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookieString).body(token);

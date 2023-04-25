@@ -23,6 +23,8 @@ public class FingerprintService {
     }
 
     public void newFingerprint(UserId userId) {
+        if(fingerprintRepository.existsById(userId))
+            fingerprintRepository.deleteAllByUserId(userId);
         fingerprintRepository.save(new Fingerprint(generateFingerprintValue(), userId));
     }
 

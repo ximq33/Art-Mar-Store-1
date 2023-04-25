@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface FingerprintRepository extends MongoRepository<Fingerprint, UserId> {
 
     Optional<Fingerprint> findFingerprintByUserId(UserId userId);
+
+    void deleteAllByUserId(UserId userId);
+
 }
