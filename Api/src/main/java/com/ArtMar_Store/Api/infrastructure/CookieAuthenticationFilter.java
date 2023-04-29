@@ -2,15 +2,12 @@ package com.ArtMar_Store.Api.infrastructure;
 
 import com.ArtMar_Store.Api.api.auth.Fingerprint;
 import com.ArtMar_Store.Api.api.auth.FingerprintService;
-import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.UserId;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
