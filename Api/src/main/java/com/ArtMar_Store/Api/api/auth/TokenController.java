@@ -38,7 +38,7 @@ class TokenController {
     JwtEncoder encoder;
 
     @PostMapping("/token")
-    public ResponseEntity<String> token(Authentication authentication) throws NoSuchAlgorithmException {
+    public ResponseEntity<Token> token(Authentication authentication) throws NoSuchAlgorithmException {
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
         Fingerprint fingerprint =  fingerprintService.getFingerprint(appUser.userId());
@@ -62,7 +62,7 @@ class TokenController {
                 .claim("userId", appUser.userId())
                 .claim("fingerprint", stringHash)
                 .build();
-        String token = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        Token token = Token.newOf(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
         Cookie cookie = new Cookie("userFingerprint", fingerprint.value());
         cookie.setHttpOnly(true);
         cookie.setMaxAge(1800);
