@@ -1,5 +1,6 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { APICore } from '../helpers/api/apiCore';
+import {Navigate, useLocation} from 'react-router-dom';
+import {getUser} from "../utils/ApiCalls";
+import {useEffect, useRef, useState} from "react";
 
 type PrivateRouteProps = {
     component: React.ComponentType,
@@ -12,20 +13,37 @@ type PrivateRouteProps = {
  * @returns
  */
 const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRouteProps) => {
-    let location = useLocation();
-    const api = new APICore();
-    const loggedInUser = api.getLoggedInUser();
+    const location = useLocation();
+    const [authenticated, setAuthenticated] = useState(false);
+    const [userRole, setUserRole] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    /**
-     * not logged in so redirect to login page with the return url
-     */
-    if (api.isUserAuthenticated() === false) {
+    const loadUserData = async () => {
+        try {
+            const response = await getUser();
+            const data = await response.json();
+            setAuthenticated(response.ok);
+            setUserRole(data.authorities[0].authority);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!authenticated) {
         return <Navigate to={'/account/login'} state={{ from: location }} replace />;
     }
 
-    // check if route is restricted by role
-    if (roles && roles.indexOf(loggedInUser.role) === -1) {
-        // role not authorised so redirect to home page
+    if (roles && roles.indexOf(userRole) === -1) {
         return <Navigate to={{ pathname: '/' }} />;
     }
 

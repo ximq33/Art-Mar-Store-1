@@ -7,7 +7,7 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {useTranslation} from 'react-i18next';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {getUser, getCookie} from '../../utils/ApiCalls';
+import {getUser, getCookie, setJwtToken, getJwtToken} from '../../utils/ApiCalls';
 
 //actions
 import {loginUser, resetAuth} from '../../redux/actions';
@@ -78,11 +78,13 @@ const Login = (): React$Element<any> => {
         })
             .then((response) => {
                 if (response.ok) {
+                    response.json().then(response => setJwtToken(response.value))
+                    console.log(getJwtToken())
                     getUser()
                         .then(r => r.json()
                             .then(r => {
                                 if (r.authorities[0].authority === "ADMIN") {
-                                    setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : 'ecommerce/dashboard')
+                                    setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : '/dashboard/ecommerce')
                                 } else {
                                     setRedirectUrl(process.env.REACT_APP_STORE_URL);
                                 }
