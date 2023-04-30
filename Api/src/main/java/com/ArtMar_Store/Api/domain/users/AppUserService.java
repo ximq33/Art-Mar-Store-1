@@ -50,7 +50,7 @@ public class AppUserService {
                 userRequestDto.name(),
                 userRequestDto.email(),
                 encoder.encode(userRequestDto.password()),
-                new SimpleGrantedAuthority("ADMIN"),
+                new SimpleGrantedAuthority("USER"),
                 true));  //TODO userBuilder (?)
     }
 

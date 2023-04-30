@@ -151,6 +151,9 @@ const Widgets = React.lazy(() => import('../pages/uikit/Widgets'));
 const GoogleMaps = React.lazy(() => import('../pages/maps/GoogleMaps'));
 const VectorMaps = React.lazy(() => import('../pages/maps/VectorMaps'));
 
+// store
+const StorePage = React.lazy(() => import('../pages/Store/StorePage/StorePage'))
+
 const loading = () => <div className=""></div>;
 
 type LoadComponentProps = {
@@ -214,6 +217,10 @@ const AllRoutes = () => {
                     ],
                 },
                 {
+                    path: 'store',
+                    element: <LoadComponent component={StorePage}/>
+                },
+                {
                     path: 'error-404',
                     element: <LoadComponent component={ErrorPageNotFound} />,
                 },
@@ -234,7 +241,7 @@ const AllRoutes = () => {
         {
             // auth protected routes
             path: '/',
-            element: <PrivateRoute roles={'Admin'} component={Layout} />,
+            element: <PrivateRoute roles={'ADMIN'} component={Layout} />,
             children: [
                 {
                     path: 'dashboard',
