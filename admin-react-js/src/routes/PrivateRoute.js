@@ -1,10 +1,10 @@
-import {Navigate, useLocation} from 'react-router-dom';
-import {getUser} from "../utils/ApiCalls";
-import {useEffect, useRef, useState} from "react";
+import { Navigate, useLocation } from 'react-router-dom';
+import { getUser } from '../utils/ApiCalls';
+import { useEffect, useState } from 'react';
 
 type PrivateRouteProps = {
-    component: React.ComponentType,
-    roles?: string,
+    component: React.ComponentType;
+    roles?: string;
 };
 
 /**
@@ -14,9 +14,8 @@ type PrivateRouteProps = {
  */
 const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRouteProps) => {
     const location = useLocation();
-    const [authenticated, setAuthenticated] = useState(false);
-    const [userRole, setUserRole] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [authenticated, setAuthenticated] = useState(true);
+    const [userRole, setUserRole] = useState('');
 
     const loadUserData = async () => {
         try {
@@ -26,25 +25,28 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
             setUserRole(data.authorities[0].authority);
         } catch (error) {
             console.error(error);
-        } finally {
-            setIsLoading(false);
+            throw error;
         }
     };
 
     useEffect(() => {
-        loadUserData();
+        const fetchData = async () => {
+            try {
+                await loadUserData();
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+        };
+        return fetchData();
     }, []);
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
 
     if (!authenticated) {
         return <Navigate to={'/account/login'} state={{ from: location }} replace />;
     }
 
     if (roles && roles.indexOf(userRole) === -1) {
-        return <Navigate to={{ pathname: '/' }} />;
+        return <Navigate to={{ pathname: '/account/login' }} />;
     }
 
     return <RouteComponent />;

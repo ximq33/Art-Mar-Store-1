@@ -22,6 +22,7 @@ export function getJwtToken() {
 }
 
 export function setJwtToken(token) {
+    sessionStorage.removeItem("jwt")
     sessionStorage.setItem("jwt", token)
 }
 

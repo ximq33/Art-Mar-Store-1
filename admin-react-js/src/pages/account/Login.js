@@ -39,6 +39,8 @@ const Login = (): React$Element<any> => {
     const {t} = useTranslation();
     const dispatch = useDispatch();
     const [authority, setAuthority] = useState(null);
+    const [err, setErr] = useState(null);
+
 
     const location = useLocation();
     const [redirectUrl, setRedirectUrl] = useState(null);
@@ -77,6 +79,10 @@ const Login = (): React$Element<any> => {
             }
         })
             .then((response) => {
+                if (response.status >= 400) {
+                        setErr("Niepoprawne dane logowania");
+                        return;
+                }
                 if (response.ok) {
                     response.json().then(response => setJwtToken(response.value))
                     console.log(getJwtToken())
@@ -86,13 +92,12 @@ const Login = (): React$Element<any> => {
                                 if (r.authorities[0].authority === "ADMIN") {
                                     setRedirectUrl(location.state && location.state.from ? location.state.from.pathname : '/dashboard/ecommerce')
                                 } else {
-                                    setRedirectUrl(process.env.REACT_APP_STORE_URL);
+                                    setRedirectUrl('/account/register')
                                 }
                                 setAuthority(r.authorities[0].authority);
                             }));
-                } else {
-                    console.log('Error:', response.statusText);
                 }
+
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -112,9 +117,9 @@ const Login = (): React$Element<any> => {
                     </p>
                 </div>
 
-                {error && (
+                {err && (
                     <Alert variant="danger" className="my-2">
-                        {error}
+                        {err}
                     </Alert>
                 )}
 
@@ -126,7 +131,7 @@ const Login = (): React$Element<any> => {
                         label={t('Username')}
                         type="text"
                         name="username"
-                        placeholder={t('Enter your Username')}
+                        placeholder={t('Podaj email')}
                         containerClass={'mb-3'}
                     />
                     <FormInput
