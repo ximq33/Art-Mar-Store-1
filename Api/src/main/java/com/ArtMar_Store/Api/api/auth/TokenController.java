@@ -41,7 +41,7 @@ class TokenController {
     public ResponseEntity<Token> token(Authentication authentication) throws NoSuchAlgorithmException {
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
-        Fingerprint fingerprint =  fingerprintService.getFingerprint(appUser.userId());
+        Fingerprint fingerprint = fingerprintService.getFingerprint(appUser.userId());
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update(fingerprint.value().getBytes());
         String stringHash = Arrays.toString(messageDigest.digest());
