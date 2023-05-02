@@ -45,6 +45,9 @@ public class AppUserService {
         if (appUserRepository.existsAccountByEmail(userRequestDto.email())){
             throw new UnableToRegisterException("Użytkownik z podanym e-mailem już istnieje");
         }
+        if (appUserRepository.existsAccountByName(userRequestDto.name())){
+            throw new UnableToRegisterException("Użytkownik z podaną nazwą już istnieje");
+        }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return appUserRepository.save(new AppUser(userIdSupplier.get(),
                 userRequestDto.name(),
@@ -54,8 +57,9 @@ public class AppUserService {
                 true));  //TODO userBuilder (?)
     }
 
-    public UserDetails findByUserName(String username) {
-        return appUserRepository.findUserDetailsByName(username);
+    public UserDetails findByUserNameOrEmail(String usernameOrEmail) {
+        return appUserRepository.findUserDetailsByNameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new WrongCredentialsException("Niepoprawne dane logowania"));
     }
 
     public List<UserResponseDto> getAllUsers() {
@@ -69,6 +73,8 @@ public class AppUserService {
     public Optional<UserResponseDto> findAppUserByUserId(String userId) {
         return appUserRepository.findAppUserByUserId(UserId.newId(userId)).map(UserResponseDto::fromDomain);
     }
+
+
 
     public AppUser mapJwtToUser(Jwt jwt){
         String id = jwt.getClaim("userId").toString();

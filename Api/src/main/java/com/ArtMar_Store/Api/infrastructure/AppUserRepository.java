@@ -22,4 +22,7 @@ public interface AppUserRepository extends MongoRepository<AppUser, UserId> {
     Optional<AppUser> findAppUserByUserId(UserId userId);
 
 
+    Optional<UserDetails> findUserDetailsByNameOrEmail(String usernameOrEmail, String usernameOrEmail1);
+
+    boolean existsAccountByName(String name);
 }

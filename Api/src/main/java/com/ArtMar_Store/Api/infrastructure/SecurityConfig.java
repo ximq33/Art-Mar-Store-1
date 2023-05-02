@@ -96,7 +96,7 @@ class SecurityConfig {
 
     @Bean
     UserDetailsService users() {
-        return userService::findByUserName;
+        return userService::findByUserNameOrEmail;
     }
 
     @Bean
