@@ -19,13 +19,15 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
 
     const loadUserData = async () => {
         try {
-            setAuthenticated(false);
             const response = await getUser();
+            if (response.status >= 400) {
+                setAuthenticated(false);
+            }
             const data = await response.json();
             setAuthenticated(response.ok);
-            console.log("1." + authenticated);
             setUserRole(data.authorities[0].authority);
         } catch (error) {
+            setAuthenticated(false);
             console.error(error);
             throw error;
         }
@@ -44,7 +46,6 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
     }, []);
 
     if (!authenticated) {
-        console.log("2." + authenticated);
         return <Navigate to={'/account/login'} state={{ from: location }} replace />;
     }
 
