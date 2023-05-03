@@ -9,14 +9,6 @@ export const getUser = () => {
     })
 }
 
-export const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-        return parts.pop().split(';').shift();
-    }
-}
-
 export function getJwtToken() {
     return sessionStorage.getItem("jwt")
 }
@@ -24,6 +16,11 @@ export function getJwtToken() {
 export function setJwtToken(token) {
     sessionStorage.removeItem("jwt")
     sessionStorage.setItem("jwt", token)
+}
+
+export function logout(){
+    sessionStorage.removeItem("jwt")
+    sessionStorage.removeItem("refreshToken")
 }
 
 // Longer duration refresh token (30-60 min)

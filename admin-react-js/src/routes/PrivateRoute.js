@@ -19,15 +19,17 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
 
     const loadUserData = async () => {
         try {
+            setAuthenticated(false);
             const response = await getUser();
             const data = await response.json();
             setAuthenticated(response.ok);
+            console.log("1." + authenticated);
             setUserRole(data.authorities[0].authority);
         } catch (error) {
             console.error(error);
             throw error;
         }
-    };
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,10 +44,11 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
     }, []);
 
     if (!authenticated) {
+        console.log("2." + authenticated);
         return <Navigate to={'/account/login'} state={{ from: location }} replace />;
     }
 
-    if (roles && roles.indexOf(userRole) === -1) {
+    if (roles && roles.indexOf(userRole) === -1 || userRole === null) {
         return <Navigate to={{ pathname: '/account/login' }} />;
     }
 
