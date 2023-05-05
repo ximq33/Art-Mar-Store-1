@@ -1,6 +1,5 @@
 import React from 'react';
 import "./Navbar.css";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import logo from "../../../assets/images/artmar-logo.webp"
 

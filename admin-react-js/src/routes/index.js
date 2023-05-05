@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import PrivateRoute from './PrivateRoute';
 import Root from './Root';
 import * as layoutConstants from '../constants/layout';
-import 'store.bootstrap/dist/js/bootstrap.bundle.min.js';
 
 
 

@@ -3,7 +3,6 @@ import {useRoutes} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import PrivateRoute from './StorePrivateRoute';
 import StoreRoot from './StoreRoot';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 
 const StorePage = React.lazy(() => import('../pages/Store/StorePage/StorePage'));
