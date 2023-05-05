@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import { AllRoutes } from './index';
+import { AllRoutes } from './StoreIndex';
 
 
 const Routes = () => {

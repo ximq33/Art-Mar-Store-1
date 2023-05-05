@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
-import Routes from './routes/Routes';
-
+import StoreRoutes from './storeRoutes/StoreRoutes';
 
 
 // setup fake backend
@@ -10,9 +9,9 @@ import { configureFakeBackend } from './helpers';
 // Themes
 
 // For Saas import Saas.scss
-import './assets/scss/Saas.scss';
-
-
+// import './assets/scss/Saas.scss';
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import './styles.css'
 // For Modern demo import Modern.scss
 // import './assets/scss/Modern.scss';
 
@@ -27,8 +26,8 @@ type AppProps = {};
 /**
  * Main app component
  */
-const App = (props: AppProps): React$Element<any> => {
-    return <Routes></Routes>;
+const AppStore = (props: AppProps): React$Element<any> => {
+    return <StoreRoutes></StoreRoutes>;
 };
 
-export default App;
+export default AppStore;
