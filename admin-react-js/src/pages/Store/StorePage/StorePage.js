@@ -3,7 +3,6 @@ import Navbar from "../Navbar/Navbar";
 import Header from "../Header/Header";
 import Products from "../Products/Products";
 import Footer from "../Footer/Footer";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../../styles.css";
 
 
