@@ -1,6 +1,9 @@
 import React from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-const Header = () => (
+
+
+const Header = () => {
+    return(
      <header className="bg-dark py-5">
          <div className="container px-4 px-lg-5 my-5">
              <div className="text-center text-white">
@@ -10,6 +13,7 @@ const Header = () => (
          </div>
      </header>
 );
+};
 
 Header.propTypes = {};
 

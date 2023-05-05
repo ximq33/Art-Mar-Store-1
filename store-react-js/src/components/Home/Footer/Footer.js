@@ -1,5 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'store.bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const Footer = () => (
     <footer className="py-4 bg-dark footer">

@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import PrivateRoute from './PrivateRoute';
 import Root from './Root';
 import * as layoutConstants from '../constants/layout';
+import 'store.bootstrap/dist/js/bootstrap.bundle.min.js';
+
+
 
 // All layouts/containers
 import DefaultLayout from '../layouts/Default';
@@ -152,7 +155,6 @@ const GoogleMaps = React.lazy(() => import('../pages/maps/GoogleMaps'));
 const VectorMaps = React.lazy(() => import('../pages/maps/VectorMaps'));
 
 // store
-const StorePage = React.lazy(() => import('../pages/Store/StorePage/StorePage'))
 
 const loading = () => <div className=""></div>;
 
@@ -193,7 +195,12 @@ const AllRoutes = () => {
     let Layout = getLayout();
 
     return useRoutes([
+        // {
+        //     path: 'store',
+        //     element: <LoadComponent component={StorePage}/>
+        // },
         { path: '/', element: <Root /> },
+
         {
             // public routes
             path: '/',
@@ -216,10 +223,7 @@ const AllRoutes = () => {
                         { path: 'logout2', element: <LoadComponent component={Logout2} /> },
                     ],
                 },
-                {
-                    path: 'store',
-                    element: <LoadComponent component={StorePage}/>
-                },
+
                 {
                     path: 'error-404',
                     element: <LoadComponent component={ErrorPageNotFound} />,
