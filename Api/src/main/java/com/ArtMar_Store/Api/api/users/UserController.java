@@ -31,8 +31,7 @@ class UserController {
     }
 
     @PostMapping
-    ResponseEntity<UserResponseDto> registerNewUser(
-          @Valid @RequestBody UserRequestDto userRequestDto) {
+    ResponseEntity<UserResponseDto> registerNewUser(@Valid @RequestBody UserRequestDto userRequestDto) {
         System.out.println("halo");
         AppUser user = userService.registerNewUser(userRequestDto);
 

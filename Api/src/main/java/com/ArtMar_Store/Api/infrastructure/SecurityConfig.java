@@ -1,5 +1,6 @@
 package com.ArtMar_Store.Api.infrastructure;
 
+import com.ArtMar_Store.Api.api.products.ErrorDTO;
 import com.ArtMar_Store.Api.domain.users.AppUserService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,9 +31,13 @@ import org.springframework.security.oauth2.server.resource.web.access.BearerToke
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Configuration
 class SecurityConfig {
@@ -42,6 +49,8 @@ class SecurityConfig {
         this.userService = userService;
         this.cookieAuthenticationFilter = cookieAuthenticationFilter;
     }
+
+
 
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -79,7 +88,7 @@ class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/fromToken").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("SCOPE_ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/files/**").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
 
                         .anyRequest()
                         .authenticated()

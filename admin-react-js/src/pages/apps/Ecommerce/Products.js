@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import classNames from 'classnames';
@@ -15,15 +15,41 @@ import { products } from './Data';
 const ProductColumn = ({ row }) => {
     const rating = row.original.rating;
     const emptyStars = rating < 5 ? 5 - rating : 0;
+    const [postData, setPostData] = useState([]);
+    const [imageData, setImageData] = useState([]);
+
+
+
+
+    useEffect(() => {
+        const APIURL = process.env.REACT_APP_API_URL + "products";
+        fetch(APIURL)
+            .then((res) => res.json())
+            .then((data) => setPostData(data));
+    }, []);
+
+    useEffect(() => {
+        const productIds = postData.map((item) => item.productId).join(",");
+        const APIURL = process.env.REACT_APP_API_URL + "files?productIds=" + productIds;
+        console.log(APIURL);
+        fetch(APIURL)
+            .then((res) => res.json())
+            .then((data) => setImageData(data));
+    }, [postData]);
+
+
     return (
         <>
+            {postData &&
+            postData.map((item) => (
             <img
-                src={row.original.image}
+                src={"data:image/webp;base64," + imageData.find((image) => image.productId === item.productId)?.image}
                 alt={row.original.name}
                 title={row.original.name}
                 className="rounded me-3"
                 height="48"
             />
+            ))}
             <p className="m-0 d-inline-block align-middle font-16">
                 <Link to="/apps/ecommerce/details" className="text-body">
                     {row.original.name}
