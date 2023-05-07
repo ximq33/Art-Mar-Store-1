@@ -20,9 +20,7 @@ import java.util.function.Supplier;
 public class AppUserService {
 
     private final AppUserRepository appUserRepository;
-
     private final Supplier<UserId> userIdSupplier;
-
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public BCryptPasswordEncoder getEncoder() {
@@ -36,7 +34,7 @@ public class AppUserService {
     }
 
     public List<UserDetails> findAll() {
-        List<AppUser> appUsers = appUserRepository.findAll();
+        final List<AppUser> appUsers = appUserRepository.findAll();
 
         return new ArrayList<>(appUsers);
     }
@@ -53,7 +51,7 @@ public class AppUserService {
                 userRequestDto.name(),
                 userRequestDto.email(),
                 encoder.encode(userRequestDto.password()),
-                new SimpleGrantedAuthority("USER"),
+                new SimpleGrantedAuthority("ADMIN"),
                 true));  //TODO userBuilder (?)
     }
 

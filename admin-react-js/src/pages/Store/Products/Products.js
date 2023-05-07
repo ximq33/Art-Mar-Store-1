@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import "./Products.css";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 
 const Products = () => {
@@ -8,7 +7,7 @@ const Products = () => {
     const [imageData, setImageData] = useState([]);
 
     useEffect(() => {
-        const APIURL = "http://localhost:8080/products";
+        const APIURL = process.env.REACT_APP_API_URL + "products";
         fetch(APIURL)
             .then((res) => res.json())
             .then((data) => setPostData(data));
@@ -16,7 +15,8 @@ const Products = () => {
 
     useEffect(() => {
         const productIds = postData.map((item) => item.productId).join(",");
-        const APIURL = `http://localhost:8080/files?productIds=${productIds}`;
+        const APIURL = process.env.REACT_APP_API_URL + "files?productIds=" + productIds;
+        console.log(APIURL);
         fetch(APIURL)
             .then((res) => res.json())
             .then((data) => setImageData(data));
