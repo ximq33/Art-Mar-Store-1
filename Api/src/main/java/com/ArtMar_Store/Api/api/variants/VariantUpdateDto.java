@@ -1,10 +1,5 @@
 package com.ArtMar_Store.Api.api.variants;
 
-import com.ArtMar_Store.Api.domain.products.ProductId;
-import com.ArtMar_Store.Api.domain.variants.Color;
-import com.ArtMar_Store.Api.domain.variants.Variant;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.validator.constraints.Length;
@@ -15,30 +10,28 @@ import java.util.Optional;
 
 class VariantUpdateDto{
         @Positive(message = "price has to be positive")
-        BigDecimal price;
+        private final BigDecimal price;
         @PositiveOrZero(message = "quantity cannot be negative")
-        Integer quantity;
-        Boolean disabled;
-        String imgPath;
+        private final Integer quantity;
+        private final Boolean enabled;
         @Length(min = 1, max = 100)
-        String manufacturer;
+        private final String manufacturer;
         @Length(min = 1, max = 100)
-        String colorName;
+        private final String colorName;
         @Length(min = 1, max = 100)
-        String RGBvalue;
+        private final String RGBvalue;
         @Length(min = 1, max = 100)
-        String side;
+        private final String side;
         @Length(min = 1, max = 100)
-        String pattern;
+        private final String pattern;
         @Length(min = 1, max = 100)
-        String productId;
+        private final String productId;
 
 
-        public VariantUpdateDto(BigDecimal price, Integer quantity, Boolean disabled, String imgPath, String manufacturer, String colorName, String RGBvalue, String side, String pattern, String productId) {
+        public VariantUpdateDto(BigDecimal price, Integer quantity, Boolean disabled, String manufacturer, String colorName, String RGBvalue, String side, String pattern, String productId) {
                 this.price = price;
                 this.quantity = quantity;
-                this.disabled = disabled;
-                this.imgPath = imgPath;
+                this.enabled = disabled;
                 this.manufacturer = manufacturer;
                 this.colorName = colorName;
                 this.RGBvalue = RGBvalue;
@@ -56,11 +49,7 @@ class VariantUpdateDto{
         }
 
         public Optional<Boolean> isDisabled() {
-                return Optional.ofNullable(disabled);
-        }
-
-        public Optional<String> getImgPath() {
-                return Optional.ofNullable(imgPath);
+                return Optional.ofNullable(enabled);
         }
 
         public Optional<String> getManufacturer() {
@@ -92,12 +81,12 @@ class VariantUpdateDto{
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
                 VariantUpdateDto that = (VariantUpdateDto) o;
-                return quantity == that.quantity && disabled == that.disabled && Objects.equals(price, that.price) && Objects.equals(imgPath, that.imgPath) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(colorName, that.colorName) && Objects.equals(RGBvalue, that.RGBvalue) && Objects.equals(side, that.side) && Objects.equals(pattern, that.pattern) && Objects.equals(productId, that.productId);
+                return Objects.equals(price, that.price) && Objects.equals(quantity, that.quantity) && Objects.equals(enabled, that.enabled) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(colorName, that.colorName) && Objects.equals(RGBvalue, that.RGBvalue) && Objects.equals(side, that.side) && Objects.equals(pattern, that.pattern) && Objects.equals(productId, that.productId);
         }
 
         @Override
         public int hashCode() {
-                return Objects.hash(price, quantity, disabled, imgPath, manufacturer, colorName, RGBvalue, side, pattern, productId);
+                return Objects.hash(price, quantity, enabled, manufacturer, colorName, RGBvalue, side, pattern, productId);
         }
 
         @Override
@@ -105,8 +94,7 @@ class VariantUpdateDto{
                 return "VariantUpdateDto{" +
                         "price=" + price +
                         ", quantity=" + quantity +
-                        ", disabled=" + disabled +
-                        ", imgPath='" + imgPath + '\'' +
+                        ", enabled=" + enabled +
                         ", manufacturer='" + manufacturer + '\'' +
                         ", colorName='" + colorName + '\'' +
                         ", RGBvalue='" + RGBvalue + '\'' +

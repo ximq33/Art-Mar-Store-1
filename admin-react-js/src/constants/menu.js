@@ -34,6 +34,30 @@ const MENU_ITEMS = [
             },
         ],
     },
+    {
+        key: 'ecommerce-products',
+        label: 'Produkty',
+        isTitle: false,
+        icon: 'uil-store',
+        url: '/apps/ecommerce/products',
+    },
+    {
+        key: 'ecommerce-orders',
+        label: 'Zamówienia',
+        isTitle: false,
+        icon: 'uil-shopping-cart-alt',
+        url: '/apps/ecommerce/orders',
+    },
+    {
+        key: 'ecommerce-customers',
+        label: 'Klienci',
+        isTitle: false,
+        icon: 'uil-users-alt',
+        url: '/apps/ecommerce/customers',
+    },
+
+
+
     { key: 'apps', label: 'Apps', isTitle: true },
     {
         key: 'apps-calendar',
@@ -94,36 +118,21 @@ const MENU_ITEMS = [
         isTitle: false,
         icon: 'uil-store',
         children: [
-            {
-                key: 'ecommerce-products',
-                label: 'Products',
-                url: '/apps/ecommerce/products',
-                parentKey: 'apps-ecommerce',
-            },
+
             {
                 key: 'ecommerce-details',
                 label: 'Products Details',
                 url: '/apps/ecommerce/details',
                 parentKey: 'apps-ecommerce',
             },
-            {
-                key: 'ecommerce-orders',
-                label: 'Orders',
-                url: '/apps/ecommerce/orders',
-                parentKey: 'apps-ecommerce',
-            },
+
             {
                 key: 'ecommerce-order-details',
                 label: 'Order Details',
                 url: '/apps/ecommerce/order/details',
                 parentKey: 'apps-ecommerce',
             },
-            {
-                key: 'ecommerce-customers',
-                label: 'Customers',
-                url: '/apps/ecommerce/customers',
-                parentKey: 'apps-ecommerce',
-            },
+
             {
                 key: 'ecommerce-shopping-cart',
                 label: 'Shopping Cart',

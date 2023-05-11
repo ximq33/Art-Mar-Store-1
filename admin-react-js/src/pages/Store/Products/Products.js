@@ -14,8 +14,8 @@ const Products = () => {
     }, []);
 
     useEffect(() => {
-        const productIds = postData.map((item) => item.productId).join(",");
-        const APIURL = process.env.REACT_APP_API_URL + "files?productIds=" + productIds;
+        const productIds = postData.map((item) => item.variantImageId).join("&imageId=");
+        const APIURL = process.env.REACT_APP_API_URL + "files?imageId=" + productIds;
         console.log(APIURL);
         fetch(APIURL)
             .then((res) => res.json())
@@ -33,7 +33,7 @@ const Products = () => {
                                     <div className=" card h-100 product-hover">
                                         <img
                                             className="card-img-top product-image"
-                                            src={"data:image/webp;base64," + imageData.find((image) => image.productId === item.productId)?.image}
+                                            src={"data:image/webp;base64," + imageData.find((image) => image.imageId.value === item.imageId)?.image}
                                             alt="produkt"
                                         />
                                         <div className="card-body p-4">

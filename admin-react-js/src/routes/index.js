@@ -14,6 +14,8 @@ import DetachedLayout from '../layouts/Detached';
 import HorizontalLayout from '../layouts/Horizontal';
 import FullLayout from '../layouts/Full';
 
+
+
 // lazy load all the views
 
 // auth
@@ -155,6 +157,8 @@ const VectorMaps = React.lazy(() => import('../pages/maps/VectorMaps'));
 
 // store
 
+const StorePage = React.lazy(() => import('../pages/Store/StorePage/StorePage'));
+
 const loading = () => <div className=""></div>;
 
 type LoadComponentProps = {
@@ -194,12 +198,11 @@ const AllRoutes = () => {
     let Layout = getLayout();
 
     return useRoutes([
-        // {
-        //     path: 'store',
-        //     element: <LoadComponent component={StorePage}/>
-        // },
         { path: '/', element: <Root /> },
-
+        {
+            path: 'store',
+            element: <LoadComponent component={StorePage}/>
+        },
         {
             // public routes
             path: '/',

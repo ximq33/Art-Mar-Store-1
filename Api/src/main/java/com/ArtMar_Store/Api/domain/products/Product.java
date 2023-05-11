@@ -1,4 +1,5 @@
 package com.ArtMar_Store.Api.domain.products;
+import com.ArtMar_Store.Api.domain.files.ImageId;
 import com.ArtMar_Store.Api.domain.variants.Variant;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,16 +14,10 @@ public record Product(
         @MongoId
         ProductId productId,
         String name,
-
         String manufacturer,
-
-        List<Variant> variants,
-
         BigDecimal price,
-
-        String imgPath,
-
-        String description) {
+        String description,
+        String variantImageId) {
 
 
 }
