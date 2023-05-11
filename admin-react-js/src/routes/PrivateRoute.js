@@ -16,6 +16,7 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
     const location = useLocation();
     const [authenticated, setAuthenticated] = useState(true);
     const [userRole, setUserRole] = useState('');
+    const [user, setUser] = useState('');
 
     const loadUserData = async () => {
         try {
@@ -26,6 +27,11 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
             const data = await response.json();
             setAuthenticated(response.ok);
             setUserRole(data.authorities[0].authority);
+            setUser({
+                userId: data.userId,
+                userName: data.userName,
+                userRole: data.authorities[0].authority
+            });
         } catch (error) {
             setAuthenticated(false);
             console.error(error);
@@ -53,7 +59,7 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
         return <Navigate to={{ pathname: '/account/login' }} />;
     }
 
-    return <RouteComponent />;
+    return <RouteComponent user={user}/>;
 };
 
 export default PrivateRoute;

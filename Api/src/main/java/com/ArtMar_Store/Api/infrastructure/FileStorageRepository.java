@@ -7,5 +7,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface FileStorageRepository extends MongoRepository<Image, ImageId> {
 
-    Image getImagesByProductId(String productId);
+
+    Image getImagesByVariantId(String variantId);
+
+    Image getImagesByImageId(ImageId imageId);
 }

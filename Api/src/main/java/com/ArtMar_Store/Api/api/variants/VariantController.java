@@ -1,16 +1,15 @@
 package com.ArtMar_Store.Api.api.variants;
 
 import com.ArtMar_Store.Api.api.products.ErrorDTO;
-import com.ArtMar_Store.Api.domain.products.*;
-import com.ArtMar_Store.Api.domain.users.Role;
+import com.ArtMar_Store.Api.domain.products.ProductId;
+import com.ArtMar_Store.Api.domain.products.ProductService;
+import com.ArtMar_Store.Api.domain.products.alreadyExistsException;
 import com.ArtMar_Store.Api.domain.variants.Variant;
 import com.ArtMar_Store.Api.domain.variants.VariantId;
 import com.ArtMar_Store.Api.domain.variants.VariantService;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,12 +23,15 @@ import static com.ArtMar_Store.Api.api.variants.VariantController.variant_baseUR
 
 @RestController
 @RequestMapping(variant_baseURL)
+@CrossOrigin
 class VariantController {
 
     private final VariantService variantService;
+    private final ProductService productService;
 
-    VariantController(VariantService variantService) {
+    public VariantController(VariantService variantService, ProductService productService) {
         this.variantService = variantService;
+        this.productService = productService;
     }
 
     @GetMapping
@@ -43,28 +45,28 @@ class VariantController {
     }
 
     @PostMapping
-    @RolesAllowed("ADMIN")
     ResponseEntity<VariantResponseDto> registerNewVariant(
             @RequestBody VariantRequestDto requestDto
     ) {
+
+
         Variant variant = variantService.registerNewVariant(
                 requestDto.price(),
                 requestDto.quantity(),
-                false,
-                requestDto.imgPath(),
+                requestDto.enabled(),
                 requestDto.manufacturer(),
                 requestDto.color(),
                 requestDto.side(),
                 requestDto.pattern(),
-                requestDto.productId()
+                requestDto.productId(),
+                productService.findById(requestDto.productId()).orElseThrow().name()
         );
         return ResponseEntity.created(URI.create("/variants/" + variant.variantId().value()))
                 .body(VariantResponseDto.fromDomain(variant));
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<VariantResponseDto> deleteVariant(Authentication authentication,
-                                                     @PathVariable String id){
+    ResponseEntity<VariantResponseDto> deleteVariant(@PathVariable String id){
         variantService.deleteVariantById(new VariantId(id));
         return ResponseEntity.noContent().build();
     }
@@ -72,10 +74,11 @@ class VariantController {
     @PatchMapping("/{id}")
     ResponseEntity<VariantResponseDto> updateVariant(@PathVariable String id, @Valid @RequestBody VariantUpdateDto updateDto){
 
-        System.out.println(updateDto);
+        Optional<String> productNameOpt = Optional.of(productService.findById(new ProductId(updateDto.getProductId().orElseThrow())).orElseThrow().name());
+
         return ResponseEntity.of(variantService.updateVariant(id, updateDto.getPrice(), updateDto.getQuantity(), updateDto.isDisabled(),
-                updateDto.getImgPath(), updateDto.getManufacturer(), updateDto.getColorName(), updateDto.getRGBvalue(), updateDto.getSide(), updateDto.getPattern(),
-                updateDto.getProductId()).map(VariantResponseDto::fromDomain));
+                updateDto.getManufacturer(), updateDto.getColorName(), updateDto.getRGBvalue(), updateDto.getSide(), updateDto.getPattern(),
+                updateDto.getProductId(), productNameOpt).map(VariantResponseDto::fromDomain));
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)

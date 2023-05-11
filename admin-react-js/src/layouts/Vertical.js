@@ -27,13 +27,14 @@ const loading = () => <div className=""></div>;
 
 type VerticalLayoutProps = {
     children?: any,
+    user: string,
 };
 
 type VerticalLayoutState = {
     isMenuOpened?: boolean,
 };
 
-const VerticalLayout = ({ children }: VerticalLayoutProps, state: VerticalLayoutState): React$Element<any> => {
+const VerticalLayout = ({ children, user }: VerticalLayoutProps, state: VerticalLayoutState): React$Element<any> => {
     const dispatch = useDispatch();
 
     const { layoutColor, leftSideBarTheme, leftSideBarType, layoutWidth } = useSelector((state) => ({
@@ -114,7 +115,7 @@ const VerticalLayout = ({ children }: VerticalLayoutProps, state: VerticalLayout
                 <div className="content-page">
                     <div className="content">
                         <Suspense fallback={loading()}>
-                            <Topbar openLeftMenuCallBack={openMenu} hideLogo={true} />
+                            <Topbar openLeftMenuCallBack={openMenu} hideLogo={true} user={user} />
                         </Suspense>
                         <Container fluid>
                             <Outlet />

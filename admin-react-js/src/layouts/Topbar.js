@@ -120,9 +120,10 @@ type TopbarProps = {
     navCssClasses?: string,
     openLeftMenuCallBack?: () => void,
     topbarDark?: boolean,
+    user: string,
 };
 
-const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: TopbarProps): React$Element<any> => {
+const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark, user }: TopbarProps): React$Element<any> => {
     const dispatch = useDispatch();
 
     const [isopen, setIsopen] = useState(false);
@@ -209,7 +210,7 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                             <ProfileDropdown
                                 profilePic={profilePic}
                                 menuItems={ProfileMenus}
-                                username={'Dominic Keller'}
+                                username={user.userName}
                                 userTitle={'Founder'}
                             />
                         </li>

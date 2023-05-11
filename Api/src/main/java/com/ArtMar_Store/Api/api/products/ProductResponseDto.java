@@ -9,7 +9,8 @@ public record ProductResponseDto(
         String name,
         String manufacturer,
         BigDecimal price,
-        String description) {
+        String description,
+        String variantImageId) {
 
     public static ProductResponseDto fromDomain(Product product) {
         return new ProductResponseDto(
@@ -17,6 +18,7 @@ public record ProductResponseDto(
                 product.name(),
                 product.manufacturer(),
                 product.price(),
-                product.description());
+                product.description(),
+                product.variantImageId());
     }
 }

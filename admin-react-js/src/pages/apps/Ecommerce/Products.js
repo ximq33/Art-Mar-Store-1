@@ -1,7 +1,7 @@
 // @flow
 import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Card, Button } from 'react-bootstrap';
+import {Link} from 'react-router-dom';
+import {Button, Card, Col, Row} from 'react-bootstrap';
 import classNames from 'classnames';
 
 // components
@@ -9,58 +9,25 @@ import PageTitle from '../../../components/PageTitle';
 import Table from '../../../components/Table';
 
 // dummy data
-import { products } from './Data';
 
 /* product column render */
 const ProductColumn = ({ row }) => {
-    const rating = row.original.rating;
-    const emptyStars = rating < 5 ? 5 - rating : 0;
-    const [postData, setPostData] = useState([]);
-    const [imageData, setImageData] = useState([]);
 
-
-
-
-    useEffect(() => {
-        const APIURL = process.env.REACT_APP_API_URL + "products";
-        fetch(APIURL)
-            .then((res) => res.json())
-            .then((data) => setPostData(data));
-    }, []);
-
-    useEffect(() => {
-        const productIds = postData.map((item) => item.productId).join(",");
-        const APIURL = process.env.REACT_APP_API_URL + "files?productIds=" + productIds;
-        console.log(APIURL);
-        fetch(APIURL)
-            .then((res) => res.json())
-            .then((data) => setImageData(data));
-    }, [postData]);
 
 
     return (
         <>
-            {postData &&
-            postData.map((item) => (
             <img
-                src={"data:image/webp;base64," + imageData.find((image) => image.productId === item.productId)?.image}
+                src={"data:image/webp;base64," + row.original.image}
                 alt={row.original.name}
                 title={row.original.name}
                 className="rounded me-3"
                 height="48"
             />
-            ))}
             <p className="m-0 d-inline-block align-middle font-16">
                 <Link to="/apps/ecommerce/details" className="text-body">
                     {row.original.name}
                 </Link>
-                <br />
-                {[...Array(rating)].map((x, i) => (
-                    <span key={i} className="text-warning mdi mdi-star"></span>
-                ))}
-                {[...Array(emptyStars)].map((x, i) => (
-                    <span key={i} className="text-warning mdi mdi-star-outline"></span>
-                ))}
             </p>
         </>
     );
@@ -75,7 +42,7 @@ const StatusColumn = ({ row }) => {
                     'bg-success': row.original.status,
                     'bg-danger': !row.original.status,
                 })}>
-                {row.original.status ? 'Active' : 'Deactivated'}
+                {row.original.status ? 'Dostępny' : 'Niedostępny'}
             </span>
         </>
     );
@@ -104,28 +71,39 @@ const ActionColumn = ({ row }) => {
 // get all columns
 const columns = [
     {
-        Header: 'Product',
+        Header: 'Produkt',
         accessor: 'name',
         sort: true,
         Cell: ProductColumn,
     },
     {
-        Header: 'Category',
-        accessor: 'category',
+        Header: 'Kolor',
+        accessor: 'color',
         sort: true,
     },
     {
-        Header: 'Added Date',
+        Header: 'Strona',
+        accessor: 'side',
+        sort: true,
+    },
+    {
+        Header: 'Wzór',
+        accessor: 'pattern',
+        sort: true,
+    },
+    {
+        Header: 'Data dodania',
         accessor: 'added_date',
         sort: true,
     },
+
     {
-        Header: 'Price',
+        Header: 'Cena',
         accessor: 'price',
         sort: true,
     },
     {
-        Header: 'Quantity',
+        Header: 'Ilość',
         accessor: 'quantity',
         sort: true,
     },
@@ -136,7 +114,6 @@ const columns = [
         Cell: StatusColumn,
     },
     {
-        Header: 'Action',
         accessor: 'action',
         sort: false,
         classes: 'table-action',
@@ -159,13 +136,68 @@ const sizePerPageList = [
         value: 20,
     },
     {
-        text: 'All',
-        value: products.length,
+        text: '50',
+        value: 50,
     },
 ];
 
 // main component
 const Products = (): React$Element<React$FragmentType> => {
+
+    const [variants, setVariants] = useState([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                // make a GET request to the /variants endpoint
+                const variantsResponse = await fetch(process.env.REACT_APP_API_URL + 'variants');
+                const variantsJson = await variantsResponse.json();
+
+                // map the variants array to an array of objects with the desired fields
+                const variantsWithoutImages = variantsJson.map(variant => ({
+                    id: variant.variantId,
+                    name: variant.productName,
+                    color: variant.colorName,
+                    side: variant.side,
+                    pattern: variant.pattern,
+                    image: null,
+                    added_date: variant.addedDate,
+                    price: variant.price,
+                    quantity: variant.quantity,
+                    status: variant.enabled
+                }));
+
+                // construct a comma-separated list of product IDs
+                const variantIds = variantsWithoutImages.map(variant => variant.id).join("&variantId=");
+
+                // make a GET request to the /images endpoint with the list of product IDs
+                const imagesURL = process.env.REACT_APP_API_URL + `files/ByVariantIds?variantId=${variantIds}`;
+                const imagesResponse = await fetch(imagesURL);
+                const images = await imagesResponse.json();
+
+                // update the variants array with the image data
+                const variantsWithImages = variantsWithoutImages.map(variant => {
+                    const image = images.find(image => image.productId === variant.id);
+                    if (image) {
+                        return {
+                            ...variant,
+                            image: image.image
+                        };
+                    } else {
+                        return variant;
+                    }
+                });
+                // update the state with the updated variants array
+                await setVariants(variantsWithImages);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+
     return (
         <>
             <PageTitle
@@ -206,7 +238,7 @@ const Products = (): React$Element<React$FragmentType> => {
 
                             <Table
                                 columns={columns}
-                                data={products}
+                                data={variants}
                                 pageSize={5}
                                 sizePerPageList={sizePerPageList}
                                 isSortable={true}

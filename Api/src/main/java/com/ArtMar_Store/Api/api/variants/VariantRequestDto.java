@@ -18,9 +18,7 @@ public record VariantRequestDto(
         @NotNull(message = "quantity cannot be null")
         @PositiveOrZero(message = "quantity cannot be negative")
         Integer quantity,
-        Boolean disabled,
-        @NotNull(message = "image path cannot be null")
-        String imgPath,
+        Boolean enabled,
         @NotNull(message = "manufacturer cannot be null")
         @NotEmpty(message = "manufacturer cannot be empty")
         String manufacturer,

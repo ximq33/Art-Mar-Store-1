@@ -3,8 +3,10 @@ package com.ArtMar_Store.Api.api.products;
 import com.ArtMar_Store.Api.domain.products.Product;
 import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.products.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,8 +39,6 @@ class ProductController {
         Product product = productService.registerNewProduct(
                 requestDto.name(),
                 requestDto.manufacturer(),
-                requestDto.price(),
-                "1.webp",
                 requestDto.description());
         return ResponseEntity.created(URI.create("/products/" + product.productId().value())
         ).body(
@@ -65,6 +65,12 @@ class ProductController {
                         .stream()
                         .map(ProductResponseDto::fromDomain)
                         .collect(Collectors.toList()));
+    }
+    @PatchMapping("/{id}")
+    ResponseEntity<ProductResponseDto> updateProduct(@PathVariable String id, @Valid @RequestBody ProductUpdateDto updateDto){
+
+        return ResponseEntity.of(productService.updateProduct(new ProductId(id),updateDto.getName(),
+                updateDto.getManufacturer(), updateDto.getPrice(), updateDto.getDescription(), updateDto.getVariantImageId()).map(ProductResponseDto::fromDomain));
     }
 
 

@@ -1,8 +1,8 @@
 package com.ArtMar_Store.Api.domain.products;
 
 import com.ArtMar_Store.Api.infrastructure.ProductRepository;
-import com.ArtMar_Store.Api.infrastructure.VariantRepository;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Supplier;
@@ -12,14 +12,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    private final VariantRepository variantRepository;
-
     private final Supplier<ProductId> productIdSupplier;
 
 
-    ProductService(ProductRepository productRepository, VariantRepository variantRepository, Supplier<ProductId> productIdSupplier) {
+    ProductService(ProductRepository productRepository, Supplier<ProductId> productIdSupplier) {
         this.productRepository = productRepository;
-        this.variantRepository = variantRepository;
         this.productIdSupplier = productIdSupplier;
     }
 
@@ -38,7 +35,7 @@ public class ProductService {
 
     private List<Product> findWithSameManufacturer(ProductId id) {
 
-        String manufacturer = findById(id).get().manufacturer();
+        String manufacturer = findById(id).orElseThrow().manufacturer();
 
         List<Product> list = productRepository.findAll();
         List<Product> sameManufacturers = new ArrayList<>();
@@ -62,28 +59,28 @@ public class ProductService {
         return productsWithoutManufacturer;
     }
 
-//    public Optional<Product> updateProduct(ProductId id,
-//                                           Optional<String> name,
-//                                           Optional<String> manufacturer,
-//                                           Optional<BigDecimal> price,
-//                                           Optional<String> description) {
-//        productRepository.findById(id)
-//                .map(productFromRepository ->
-//                        new Product(id,
-//                                name.orElse(productFromRepository.name()),
-//                                manufacturer.orElse(productFromRepository.manufacturer()),
-//                                productFromRepository.variants(),
-//                                price.orElse(productFromRepository.price()),
-//                                productFromRepository.imgPath(),
-//                                description.orElse(productFromRepository.description()))
-//                ).ifPresent(productRepository::save);
-//        return productRepository.findById(id);
-//    }
+    public Optional<Product> updateProduct(ProductId id,
+                                           Optional<String> name,
+                                           Optional<String> manufacturer,
+                                           Optional<BigDecimal> price,
+                                           Optional<String> description,
+                                           Optional<String> variantImageId) {
+        productRepository.findById(id)
+                .map(productFromRepository ->
+                        new Product(id,
+                                name.orElse(productFromRepository.name()),
+                                manufacturer.orElse(productFromRepository.manufacturer()),
+                                price.orElse(productFromRepository.price()),
+                                description.orElse(productFromRepository.description()),
+                                variantImageId.orElse(productFromRepository.variantImageId()))
+                ).ifPresent(productRepository::save);
+        return productRepository.findById(id);
+    }
 
     public List<Product> findRelatedOrRandom(ProductId id) {
         List<Product> sameManufacturers = findWithSameManufacturer(id);
-        List<Product> products = findWithoutManufacturer(findById(id).get().manufacturer());
-        String productManufacturer = findById(id).get().manufacturer();
+        List<Product> products = findWithoutManufacturer(findById(id).orElseThrow().manufacturer());
+        String productManufacturer = findById(id).orElseThrow().manufacturer();
         Random random = new Random();
         int max = sameManufacturers.size();
         System.out.println(max);
@@ -114,10 +111,10 @@ public class ProductService {
 
 
 
-    public Product registerNewProduct(String name, String manufacturer, BigDecimal price, String imgPath, String description) {
+    public Product registerNewProduct(String name, String manufacturer, String description) {
 
         if (!productRepository.existsByNameAndManufacturer(name, manufacturer)) {
-            return productRepository.save(new Product(productIdSupplier.get(), name, manufacturer, new ArrayList<>(), price, imgPath, description));
+            return productRepository.save(new Product(productIdSupplier.get(), name, manufacturer, null, description, null));
         } else throw new alreadyExistsException("Product with same manufacturer and name already exists");
     }
 
