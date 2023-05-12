@@ -2,8 +2,6 @@
 import React from 'react';
 import Routes from './routes/Routes';
 
-
-
 // setup fake backend
 import { configureFakeBackend } from './helpers';
 
@@ -11,7 +9,6 @@ import { configureFakeBackend } from './helpers';
 
 // For Saas import Saas.scss
 import './assets/scss/Saas.scss';
-
 
 // For Modern demo import Modern.scss
 // import './assets/scss/Modern.scss';

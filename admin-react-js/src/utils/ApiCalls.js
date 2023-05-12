@@ -1,3 +1,5 @@
+import product from "../pages/Store/ProductPage/Product";
+
 export const getUser = () => {
     return fetch(process.env.REACT_APP_API_URL + "users/fromToken", {
         method: "GET",
@@ -8,6 +10,7 @@ export const getUser = () => {
         }
     })
 }
+
 
 export function getJwtToken() {
     return sessionStorage.getItem("jwt")

@@ -1,10 +1,9 @@
-import React, { Suspense } from 'react';
-import { useRoutes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, {Suspense} from 'react';
+import {useRoutes} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 import PrivateRoute from './PrivateRoute';
 import Root from './Root';
 import * as layoutConstants from '../constants/layout';
-
 
 
 // All layouts/containers
@@ -13,7 +12,6 @@ import VerticalLayout from '../layouts/Vertical';
 import DetachedLayout from '../layouts/Detached';
 import HorizontalLayout from '../layouts/Horizontal';
 import FullLayout from '../layouts/Full';
-
 
 
 // lazy load all the views
@@ -158,6 +156,7 @@ const VectorMaps = React.lazy(() => import('../pages/maps/VectorMaps'));
 // store
 
 const StorePage = React.lazy(() => import('../pages/Store/StorePage/StorePage'));
+const ProductPageLayout = React.lazy(() => import('../pages/Store/ProductPage/ProductPageLayout'));
 
 const loading = () => <div className=""></div>;
 
@@ -165,14 +164,14 @@ type LoadComponentProps = {
     component: React.LazyExoticComponent<() => JSX.Element>,
 };
 
-const LoadComponent = ({ component: Component }: LoadComponentProps) => (
+const LoadComponent = ({component: Component}: LoadComponentProps) => (
     <Suspense fallback={loading()}>
-        <Component />
+        <Component/>
     </Suspense>
 );
 
 const AllRoutes = () => {
-    const { layout } = useSelector((state) => ({
+    const {layout} = useSelector((state) => ({
         layout: state.Layout,
     }));
 
@@ -198,75 +197,79 @@ const AllRoutes = () => {
     let Layout = getLayout();
 
     return useRoutes([
-        { path: '/', element: <Root /> },
+        {path: '/', element: <Root/>},
         {
             path: 'store',
             element: <LoadComponent component={StorePage}/>
         },
         {
+          path:'store/:productId',
+          element: <LoadComponent component={ProductPageLayout}/>
+        },
+        {
             // public routes
             path: '/',
-            element: <DefaultLayout />,
+            element: <DefaultLayout/>,
             children: [
                 {
                     path: 'account',
                     children: [
-                        { path: 'login', element: <LoadComponent component={Login} /> },
-                        { path: 'register', element: <LoadComponent component={Register} /> },
-                        { path: 'confirm', element: <LoadComponent component={Confirm} /> },
-                        { path: 'forget-password', element: <LoadComponent component={ForgetPassword} /> },
-                        { path: 'lock-screen', element: <LoadComponent component={LockScreen} /> },
-                        { path: 'logout', element: <LoadComponent component={Logout} /> },
-                        { path: 'login2', element: <LoadComponent component={Login2} /> },
-                        { path: 'register2', element: <LoadComponent component={Register2} /> },
-                        { path: 'confirm2', element: <LoadComponent component={Confirm2} /> },
-                        { path: 'forget-password2', element: <LoadComponent component={ForgetPassword2} /> },
-                        { path: 'lock-screen2', element: <LoadComponent component={LockScreen2} /> },
-                        { path: 'logout2', element: <LoadComponent component={Logout2} /> },
+                        {path: 'login', element: <LoadComponent component={Login}/>},
+                        {path: 'register', element: <LoadComponent component={Register}/>},
+                        {path: 'confirm', element: <LoadComponent component={Confirm}/>},
+                        {path: 'forget-password', element: <LoadComponent component={ForgetPassword}/>},
+                        {path: 'lock-screen', element: <LoadComponent component={LockScreen}/>},
+                        {path: 'logout', element: <LoadComponent component={Logout}/>},
+                        {path: 'login2', element: <LoadComponent component={Login2}/>},
+                        {path: 'register2', element: <LoadComponent component={Register2}/>},
+                        {path: 'confirm2', element: <LoadComponent component={Confirm2}/>},
+                        {path: 'forget-password2', element: <LoadComponent component={ForgetPassword2}/>},
+                        {path: 'lock-screen2', element: <LoadComponent component={LockScreen2}/>},
+                        {path: 'logout2', element: <LoadComponent component={Logout2}/>},
                     ],
                 },
 
                 {
                     path: 'error-404',
-                    element: <LoadComponent component={ErrorPageNotFound} />,
+                    element: <LoadComponent component={ErrorPageNotFound}/>,
                 },
                 {
                     path: 'error-500',
-                    element: <LoadComponent component={ServerError} />,
+                    element: <LoadComponent component={ServerError}/>,
                 },
                 {
                     path: 'maintenance',
-                    element: <LoadComponent component={Maintenance} />,
+                    element: <LoadComponent component={Maintenance}/>,
                 },
                 {
                     path: 'landing',
-                    element: <LoadComponent component={Landing} />,
+                    element: <LoadComponent component={Landing}/>,
                 },
             ],
         },
         {
             // auth protected routes
             path: '/',
-            element: <PrivateRoute roles={'ADMIN'} component={Layout} />,
+            element: <PrivateRoute roles={'ADMIN'} component={Layout}/>,
             children: [
                 {
                     path: 'dashboard',
                     children: [
                         {
                             path: 'analytics',
-                            element: <LoadComponent component={AnalyticsDashboard} />,
+                            element: <LoadComponent component={AnalyticsDashboard}/>,
                         },
                         {
                             path: 'ecommerce',
-                            element: <LoadComponent component={EcommerceDashboard} />,
+                            element: <LoadComponent component={EcommerceDashboard}/>,
                         },
                         {
                             path: 'project',
-                            element: <LoadComponent component={ProjectDashboard} />,
+                            element: <LoadComponent component={ProjectDashboard}/>,
                         },
                         {
                             path: 'e-wallet',
-                            element: <LoadComponent component={EWalletDashboard} />,
+                            element: <LoadComponent component={EWalletDashboard}/>,
                         },
                     ],
                 },
@@ -275,34 +278,34 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: 'calendar',
-                            element: <LoadComponent component={CalendarApp} />,
+                            element: <LoadComponent component={CalendarApp}/>,
                         },
                         {
                             path: 'chat',
-                            element: <LoadComponent component={ChatApp} />,
+                            element: <LoadComponent component={ChatApp}/>,
                         },
                         {
                             path: 'crm',
                             children: [
                                 {
                                     path: 'dashboard',
-                                    element: <LoadComponent component={CRMDashboard} />,
+                                    element: <LoadComponent component={CRMDashboard}/>,
                                 },
                                 {
                                     path: 'projects',
-                                    element: <LoadComponent component={CRMProjects} />,
+                                    element: <LoadComponent component={CRMProjects}/>,
                                 },
                                 {
                                     path: 'management',
-                                    element: <LoadComponent component={CRMManagement} />,
+                                    element: <LoadComponent component={CRMManagement}/>,
                                 },
                                 {
                                     path: 'clients',
-                                    element: <LoadComponent component={CRMClients} />,
+                                    element: <LoadComponent component={CRMClients}/>,
                                 },
                                 {
                                     path: 'orders',
-                                    element: <LoadComponent component={CRMOrderList} />,
+                                    element: <LoadComponent component={CRMOrderList}/>,
                                 },
                             ],
                         },
@@ -311,35 +314,35 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'products',
-                                    element: <LoadComponent component={EcommerceProducts} />,
+                                    element: <LoadComponent component={EcommerceProducts}/>,
                                 },
                                 {
                                     path: 'details',
-                                    element: <LoadComponent component={ProductDetails} />,
+                                    element: <LoadComponent component={ProductDetails}/>,
                                 },
                                 {
                                     path: 'orders',
-                                    element: <LoadComponent component={Orders} />,
+                                    element: <LoadComponent component={Orders}/>,
                                 },
                                 {
                                     path: 'order/details',
-                                    element: <LoadComponent component={OrderDetails} />,
+                                    element: <LoadComponent component={OrderDetails}/>,
                                 },
                                 {
                                     path: 'customers',
-                                    element: <LoadComponent component={Customers} />,
+                                    element: <LoadComponent component={Customers}/>,
                                 },
                                 {
                                     path: 'shopping-cart',
-                                    element: <LoadComponent component={Cart} />,
+                                    element: <LoadComponent component={Cart}/>,
                                 },
                                 {
                                     path: 'checkout',
-                                    element: <LoadComponent component={Checkout} />,
+                                    element: <LoadComponent component={Checkout}/>,
                                 },
                                 {
                                     path: 'sellers',
-                                    element: <LoadComponent component={Sellers} />,
+                                    element: <LoadComponent component={Sellers}/>,
                                 },
                             ],
                         },
@@ -348,11 +351,11 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'inbox',
-                                    element: <LoadComponent component={Inbox} />,
+                                    element: <LoadComponent component={Inbox}/>,
                                 },
                                 {
                                     path: 'details',
-                                    element: <LoadComponent component={EmailDetail} />,
+                                    element: <LoadComponent component={EmailDetail}/>,
                                 },
                             ],
                         },
@@ -361,15 +364,15 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'list',
-                                    element: <LoadComponent component={TaskList} />,
+                                    element: <LoadComponent component={TaskList}/>,
                                 },
                                 {
                                     path: 'kanban',
-                                    element: <LoadComponent component={Kanban} />,
+                                    element: <LoadComponent component={Kanban}/>,
                                 },
                                 {
                                     path: 'details',
-                                    element: <LoadComponent component={TaskDetails} />,
+                                    element: <LoadComponent component={TaskDetails}/>,
                                 },
                             ],
                         },
@@ -379,29 +382,29 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'list',
-                                    element: <LoadComponent component={Projects} />,
+                                    element: <LoadComponent component={Projects}/>,
                                 },
                                 {
                                     path: 'details',
-                                    element: <LoadComponent component={ProjectDetail} />,
+                                    element: <LoadComponent component={ProjectDetail}/>,
                                 },
                                 {
                                     path: 'gantt',
-                                    element: <LoadComponent component={ProjectGannt} />,
+                                    element: <LoadComponent component={ProjectGannt}/>,
                                 },
                                 {
                                     path: 'new',
-                                    element: <LoadComponent component={ProjectForm} />,
+                                    element: <LoadComponent component={ProjectForm}/>,
                                 },
                             ],
                         },
                         {
                             path: 'social',
-                            element: <LoadComponent component={SocialFeed} />,
+                            element: <LoadComponent component={SocialFeed}/>,
                         },
                         {
                             path: 'file',
-                            element: <LoadComponent component={FileManager} />,
+                            element: <LoadComponent component={FileManager}/>,
                         },
                     ],
                 },
@@ -410,39 +413,39 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: 'starter',
-                            element: <LoadComponent component={Starter} />,
+                            element: <LoadComponent component={Starter}/>,
                         },
                         {
                             path: 'profile',
-                            element: <LoadComponent component={Profile} />,
+                            element: <LoadComponent component={Profile}/>,
                         },
                         {
                             path: 'profile2',
-                            element: <LoadComponent component={Profile2} />,
+                            element: <LoadComponent component={Profile2}/>,
                         },
                         {
                             path: 'pricing',
-                            element: <LoadComponent component={Pricing} />,
+                            element: <LoadComponent component={Pricing}/>,
                         },
                         {
                             path: 'error-404-alt',
-                            element: <LoadComponent component={ErrorPageNotFoundAlt} />,
+                            element: <LoadComponent component={ErrorPageNotFoundAlt}/>,
                         },
                         {
                             path: 'timeline',
-                            element: <LoadComponent component={Timeline} />,
+                            element: <LoadComponent component={Timeline}/>,
                         },
                         {
                             path: 'invoice',
-                            element: <LoadComponent component={Invoice} />,
+                            element: <LoadComponent component={Invoice}/>,
                         },
                         {
                             path: 'faq',
-                            element: <LoadComponent component={FAQ} />,
+                            element: <LoadComponent component={FAQ}/>,
                         },
                         {
                             path: 'preloader',
-                            element: <LoadComponent component={PreLoader} />,
+                            element: <LoadComponent component={PreLoader}/>,
                         },
                     ],
                 },
@@ -454,67 +457,67 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'accordions',
-                                    element: <LoadComponent component={Accordions} />,
+                                    element: <LoadComponent component={Accordions}/>,
                                 },
                                 {
                                     path: 'alerts',
-                                    element: <LoadComponent component={Alerts} />,
+                                    element: <LoadComponent component={Alerts}/>,
                                 },
                                 {
                                     path: 'avatars',
-                                    element: <LoadComponent component={Avatars} />,
+                                    element: <LoadComponent component={Avatars}/>,
                                 },
                                 {
                                     path: 'badges',
-                                    element: <LoadComponent component={Badges} />,
+                                    element: <LoadComponent component={Badges}/>,
                                 },
                                 {
                                     path: 'breadcrumb',
-                                    element: <LoadComponent component={Breadcrumbs} />,
+                                    element: <LoadComponent component={Breadcrumbs}/>,
                                 },
                                 {
                                     path: 'buttons',
-                                    element: <LoadComponent component={Buttons} />,
+                                    element: <LoadComponent component={Buttons}/>,
                                 },
                                 {
                                     path: 'cards',
-                                    element: <LoadComponent component={Cards} />,
+                                    element: <LoadComponent component={Cards}/>,
                                 },
                                 {
                                     path: 'carousel',
-                                    element: <LoadComponent component={Carousels} />,
+                                    element: <LoadComponent component={Carousels}/>,
                                 },
                                 {
                                     path: 'dropdowns',
-                                    element: <LoadComponent component={Dropdowns} />,
+                                    element: <LoadComponent component={Dropdowns}/>,
                                 },
                                 {
                                     path: 'embedvideo',
-                                    element: <LoadComponent component={EmbedVideo} />,
+                                    element: <LoadComponent component={EmbedVideo}/>,
                                 },
                                 {
                                     path: 'grid',
-                                    element: <LoadComponent component={Grid} />,
+                                    element: <LoadComponent component={Grid}/>,
                                 },
                                 {
                                     path: 'listgroups',
-                                    element: <LoadComponent component={ListGroups} />,
+                                    element: <LoadComponent component={ListGroups}/>,
                                 },
                                 {
                                     path: 'modals',
-                                    element: <LoadComponent component={Modals} />,
+                                    element: <LoadComponent component={Modals}/>,
                                 },
                                 {
                                     path: 'notifications',
-                                    element: <LoadComponent component={Notifications} />,
+                                    element: <LoadComponent component={Notifications}/>,
                                 },
                                 {
                                     path: 'offcanvas',
-                                    element: <LoadComponent component={Offcanvases} />,
+                                    element: <LoadComponent component={Offcanvases}/>,
                                 },
                                 {
                                     path: 'paginations',
-                                    element: <LoadComponent component={Paginations} />,
+                                    element: <LoadComponent component={Paginations}/>,
                                 },
                                 // {
                                 //     path: 'placeholders',
@@ -522,52 +525,52 @@ const AllRoutes = () => {
                                 // },
                                 {
                                     path: 'popovers',
-                                    element: <LoadComponent component={Popovers} />,
+                                    element: <LoadComponent component={Popovers}/>,
                                 },
                                 {
                                     path: 'progress',
-                                    element: <LoadComponent component={Progress} />,
+                                    element: <LoadComponent component={Progress}/>,
                                 },
                                 {
                                     path: 'ribbons',
-                                    element: <LoadComponent component={Ribbons} />,
+                                    element: <LoadComponent component={Ribbons}/>,
                                 },
                                 {
                                     path: 'spinners',
-                                    element: <LoadComponent component={Spinners} />,
+                                    element: <LoadComponent component={Spinners}/>,
                                 },
                                 {
                                     path: 'tabs',
-                                    element: <LoadComponent component={Tabs} />,
+                                    element: <LoadComponent component={Tabs}/>,
                                 },
                                 {
                                     path: 'tooltips',
-                                    element: <LoadComponent component={Tooltips} />,
+                                    element: <LoadComponent component={Tooltips}/>,
                                 },
                                 {
                                     path: 'typography',
-                                    element: <LoadComponent component={Typography} />,
+                                    element: <LoadComponent component={Typography}/>,
                                 },
                             ],
                         },
                         {
                             path: 'widgets',
-                            element: <LoadComponent component={Widgets} />,
+                            element: <LoadComponent component={Widgets}/>,
                         },
                         {
                             path: 'extended',
                             children: [
                                 {
                                     path: 'dragdrop',
-                                    element: <LoadComponent component={DragDrop} />,
+                                    element: <LoadComponent component={DragDrop}/>,
                                 },
                                 {
                                     path: 'rangesliders',
-                                    element: <LoadComponent component={RangeSliders} />,
+                                    element: <LoadComponent component={RangeSliders}/>,
                                 },
                                 {
                                     path: 'ratings',
-                                    element: <LoadComponent component={Ratings} />,
+                                    element: <LoadComponent component={Ratings}/>,
                                 },
                             ],
                         },
@@ -576,15 +579,15 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'unicons',
-                                    element: <LoadComponent component={Unicons} />,
+                                    element: <LoadComponent component={Unicons}/>,
                                 },
                                 {
                                     path: 'mdi',
-                                    element: <LoadComponent component={MDIIcons} />,
+                                    element: <LoadComponent component={MDIIcons}/>,
                                 },
                                 {
                                     path: 'dripicons',
-                                    element: <LoadComponent component={Dripicons} />,
+                                    element: <LoadComponent component={Dripicons}/>,
                                 },
                             ],
                         },
@@ -593,27 +596,27 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'basic',
-                                    element: <LoadComponent component={BasicForms} />,
+                                    element: <LoadComponent component={BasicForms}/>,
                                 },
                                 {
                                     path: 'advanced',
-                                    element: <LoadComponent component={FormAdvanced} />,
+                                    element: <LoadComponent component={FormAdvanced}/>,
                                 },
                                 {
                                     path: 'validation',
-                                    element: <LoadComponent component={FormValidation} />,
+                                    element: <LoadComponent component={FormValidation}/>,
                                 },
                                 {
                                     path: 'wizard',
-                                    element: <LoadComponent component={FormWizard} />,
+                                    element: <LoadComponent component={FormWizard}/>,
                                 },
                                 {
                                     path: 'upload',
-                                    element: <LoadComponent component={FileUpload} />,
+                                    element: <LoadComponent component={FileUpload}/>,
                                 },
                                 {
                                     path: 'editors',
-                                    element: <LoadComponent component={Editors} />,
+                                    element: <LoadComponent component={Editors}/>,
                                 },
                             ],
                         },
@@ -622,11 +625,11 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'basic',
-                                    element: <LoadComponent component={BasicTables} />,
+                                    element: <LoadComponent component={BasicTables}/>,
                                 },
                                 {
                                     path: 'advanced',
-                                    element: <LoadComponent component={AdvancedTables} />,
+                                    element: <LoadComponent component={AdvancedTables}/>,
                                 },
                             ],
                         },
@@ -635,15 +638,15 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'apex',
-                                    element: <LoadComponent component={ApexChart} />,
+                                    element: <LoadComponent component={ApexChart}/>,
                                 },
                                 {
                                     path: 'brite',
-                                    element: <LoadComponent component={BriteChart} />,
+                                    element: <LoadComponent component={BriteChart}/>,
                                 },
                                 {
                                     path: 'chartjs',
-                                    element: <LoadComponent component={ChartJs} />,
+                                    element: <LoadComponent component={ChartJs}/>,
                                 },
                             ],
                         },
@@ -652,11 +655,11 @@ const AllRoutes = () => {
                             children: [
                                 {
                                     path: 'googlemaps',
-                                    element: <LoadComponent component={GoogleMaps} />,
+                                    element: <LoadComponent component={GoogleMaps}/>,
                                 },
                                 {
                                     path: 'vectormaps',
-                                    element: <LoadComponent component={VectorMaps} />,
+                                    element: <LoadComponent component={VectorMaps}/>,
                                 },
                             ],
                         },
@@ -667,4 +670,4 @@ const AllRoutes = () => {
     ]);
 };
 
-export { AllRoutes };
+export {AllRoutes};
