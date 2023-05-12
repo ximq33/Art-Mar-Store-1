@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
-import Navbar from "../Navbar/Navbar";
-import Header from "../Header/Header";
-import Products from "../Products/Products";
-import Footer from "../Footer/Footer";
-import "../../../styles.css";
+const Navbar = React.lazy(() => import('../Navbar/Navbar'));
+const Header = React.lazy(() => import('../Header/Header'));
+const Products = React.lazy(() => import('../Products/Products'));
+const Footer = React.lazy(() => import('../Footer/Footer'));
+
+import "../styles.css";
 
 
 const StorePage = () => {
-
 
     return(
     <div>

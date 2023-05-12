@@ -110,12 +110,12 @@ const ProductDetails = (): React$Element<React$FragmentType> => {
                 breadCrumbItems={[
                     { label: 'eCommerce', path: '/apps/ecommerce/details' },
                     {
-                        label: 'Product Details',
+                        label: 'Product.js Details',
                         path: '/apps/ecommerce/details',
                         active: true,
                     },
                 ]}
-                title={'Product Details'}
+                title={'Product.js Details'}
             />
 
             <Row>

@@ -92,4 +92,7 @@ public class VariantService {
     }
 
 
+    public List<Variant> getVariantsByProductId(String productId) {
+        return variantRepository.findByProductId(new ProductId(productId));
+    }
 }

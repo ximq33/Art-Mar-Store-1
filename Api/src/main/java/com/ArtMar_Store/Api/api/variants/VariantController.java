@@ -81,6 +81,18 @@ class VariantController {
                 updateDto.getProductId(), productNameOpt).map(VariantResponseDto::fromDomain));
     }
 
+    @GetMapping("/byProductId/{productId}")
+    ResponseEntity<List<VariantResponseDto>> getVariantsByProductId(@PathVariable String productId) {
+        List<VariantResponseDto> variants = variantService.getVariantsByProductId(productId)
+                .stream()
+                .map(VariantResponseDto::fromDomain)
+                .collect(Collectors.toList());
+        if (variants.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(variants);
+    }
+
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(alreadyExistsException.class)
     public ResponseEntity<ErrorDTO> exceptionHandler(alreadyExistsException ex) {

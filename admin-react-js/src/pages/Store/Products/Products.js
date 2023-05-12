@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import "./Products.css";
+import {Link} from "react-router-dom";
 
 
 const Products = () => {
@@ -44,10 +45,11 @@ const Products = () => {
                                         </div>
                                         <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                             <div className="text-center">
-                                                <a className="btn btn-outline-dark mt-auto"
-                                                   href={`/products/${item.id}`}>
+                                                <Link
+                                                    to={`${item.productId}`}
+                                                    className="btn btn-outline-dark mt-auto">
                                                     Zobacz opcje
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>

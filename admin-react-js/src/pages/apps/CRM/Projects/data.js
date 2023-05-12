@@ -57,7 +57,7 @@ const statisticsData = [
 const tasksData = [
     {
         title: 'Landing Page Design',
-        shortDesc: 'Create a new landing page (Saas Product)',
+        shortDesc: 'Create a new landing page (Saas Product.js)',
         time: '2 Hrs ago',
         assignPeople: 5,
     },

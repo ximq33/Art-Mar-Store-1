@@ -45,7 +45,7 @@ const ProjectOverview = (): React$Element<any> => {
             },
         },
         colors: ['#727cf5', '#0acf97', '#fa5c7c', '#ffbc00'],
-        labels: ['Product Design', 'Web Development', 'Illustration Design', 'UI/UX Design'],
+        labels: ['Product.js Design', 'Web Development', 'Illustration Design', 'UI/UX Design'],
     };
 
     // chart data
