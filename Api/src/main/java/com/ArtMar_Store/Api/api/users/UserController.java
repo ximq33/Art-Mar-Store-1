@@ -1,19 +1,15 @@
 package com.ArtMar_Store.Api.api.users;
 
 import com.ArtMar_Store.Api.api.products.ErrorDTO;
-import com.ArtMar_Store.Api.domain.products.alreadyExistsException;
 import com.ArtMar_Store.Api.domain.users.AppUser;
 import com.ArtMar_Store.Api.domain.users.AppUserService;
 import com.ArtMar_Store.Api.domain.users.UnableToRegisterException;
-import com.ArtMar_Store.Api.domain.users.UserId;
 import jakarta.validation.Valid;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import java.net.URI;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

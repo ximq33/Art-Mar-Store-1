@@ -23,7 +23,7 @@ import static com.ArtMar_Store.Api.api.variants.VariantController.variant_baseUR
 
 @RestController
 @RequestMapping(variant_baseURL)
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 class VariantController {
 
     private final VariantService variantService;
