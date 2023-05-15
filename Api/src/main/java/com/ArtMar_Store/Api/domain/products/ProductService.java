@@ -45,10 +45,11 @@ public class ProductService {
                 sameManufacturers.add(p);
             }
         }
+
         return sameManufacturers;
     }
 
-    private List<Product> findWithoutManufacturer(String manufacturer) {
+    private List<Product> findWithoutSameManufacturer(String manufacturer) {
         List<Product> allProducts = productRepository.findAll();
         List<Product> productsWithoutManufacturer = new ArrayList<>();
         for (Product p : allProducts) {
@@ -79,24 +80,33 @@ public class ProductService {
 
     public List<Product> findRelatedOrRandom(ProductId id) {
         List<Product> sameManufacturers = findWithSameManufacturer(id);
-        List<Product> products = findWithoutManufacturer(findById(id).orElseThrow().manufacturer());
+        List<Product> products = findWithoutSameManufacturer(findById(id).orElseThrow().manufacturer());
         String productManufacturer = findById(id).orElseThrow().manufacturer();
         Random random = new Random();
         int max = sameManufacturers.size();
-        System.out.println(max);
         int randomNumber;
 
         List<Product> readyResponse = new ArrayList<>();
 
-        while (readyResponse.size() != 4 || products.size() == 0) {
+        while (readyResponse.size() < 4) {
+            System.out.println("ready response " + readyResponse);
             if (max == 0) {
-                int newMax = products.size();
-                randomNumber = random.nextInt(newMax);
-                if (Objects.equals(products.get(randomNumber).manufacturer(), productManufacturer)) {
-                    products.remove(randomNumber);
-                } else {
-                    readyResponse.add(products.get(randomNumber));
+                int newMax;
+                if (products.size() != 0){
+                    newMax = products.size();
+                    System.out.println("newmax " + newMax);
+                    randomNumber = random.nextInt(newMax);
+                    System.out.println("randomNumber " + randomNumber);
+                    if (Objects.equals(products.get(randomNumber).manufacturer(), productManufacturer)) {
+                        products.remove(randomNumber);
+                    } else {
+                        readyResponse.add(products.get(randomNumber));
+                    }
                 }
+                else {
+                    readyResponse.add(findById(id).orElseThrow());
+                }
+
             } else {
                 randomNumber = random.nextInt(max);
                 readyResponse.add(sameManufacturers.get(randomNumber));
