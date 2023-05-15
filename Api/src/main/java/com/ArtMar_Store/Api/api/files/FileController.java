@@ -36,7 +36,7 @@ class FileController {
         return ResponseEntity.ok(fileStorageService.loadImagesByVariantIds(variantId));
     }
 
-    @GetMapping
+    @GetMapping("/ByImageIds")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<ImageResponseDto>> getImagesByImageIds(@RequestParam List<String> imageId){
         return ResponseEntity.ok(fileStorageService.loadImagesByImageIds(imageId));
