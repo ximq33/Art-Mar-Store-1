@@ -7,7 +7,7 @@ import productImg1 from "../../../assets/images/products/product-5.jpg";
 import productImg2 from "../../../assets/images/products/product-1.jpg";
 import productImg3 from "../../../assets/images/products/product-6.jpg";
 import productImg4 from "../../../assets/images/products/product-3.jpg";
-import {getVariants} from "../../../utils/ApiCalls";
+import {getVariantsByProductId} from "../../../utils/ApiCalls";
 
 const Product = ({productId}) => {
 
@@ -23,7 +23,7 @@ const Product = ({productId}) => {
 
 
     useEffect(()=>{
-        getVariants(productId).then(result => setVariants(result));
+        getVariantsByProductId(productId).then(result => setVariants(result));
     }, [])
 
     return (

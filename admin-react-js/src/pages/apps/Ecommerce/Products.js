@@ -7,7 +7,7 @@ import classNames from 'classnames';
 // components
 import PageTitle from '../../../components/PageTitle';
 import Table from '../../../components/Table';
-import {getJwtToken} from "../../../utils/ApiCalls";
+import {getAllVariants, getJwtToken} from "../../../utils/ApiCalls";
 
 
 // dummy data
@@ -243,51 +243,8 @@ class Products extends React.Component {
     };
 
     async fetchData() {
-        try {
-            // make a GET request to the /variants endpoint
-            const variantsResponse = await fetch(process.env.REACT_APP_API_URL + 'variants');
-            const variantsJson = await variantsResponse.json();
-
-            // map the variants array to an array of objects with the desired fields
-            const variantsWithoutImages = variantsJson.map(variant => ({
-                id: variant.variantId,
-                name: variant.productName,
-                color: variant.colorName,
-                side: variant.side,
-                pattern: variant.pattern,
-                image: null,
-                added_date: variant.addedDate,
-                price: variant.price,
-                quantity: variant.quantity,
-                status: variant.enabled
-            }));
-
-            // construct a comma-separated list of product IDs
-            const variantIds = variantsWithoutImages.map(variant => variant.id).join("&variantId=");
-
-            // make a GET request to the /images endpoint with the list of product IDs
-            const imagesURL = process.env.REACT_APP_API_URL + `files/ByVariantIds?variantId=${variantIds}`;
-            const imagesResponse = await fetch(imagesURL);
-            const images = await imagesResponse.json();
-
-            // update the variants array with the image data
-            const variantsWithImages = variantsWithoutImages.map(variant => {
-                const image = images.find(image => image.productId === variant.id);
-                if (image) {
-                    return {
-                        ...variant,
-                        image: image.image
-                    };
-                } else {
-                    return variant;
-                }
-            });
-            // update the state with the updated variants array
-            if (this._isMounted) {
-                await this.setState({variants: variantsWithImages});
-            }
-        } catch (error) {
-            console.error(error);
+        if (this._isMounted) {
+            getAllVariants().then(result => this.setState({variants: result}));
         }
     }
 
