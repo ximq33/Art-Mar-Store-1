@@ -1,13 +1,14 @@
 // @flow
 import React from 'react';
-import { Row, Col, Card, Form, Button, ProgressBar } from 'react-bootstrap';
-import { Wizard, Steps, Step } from 'react-albus';
+import {Row, Col, Card, Form, Button, ProgressBar, Container} from 'react-bootstrap';
+import {Wizard, Steps, Step} from 'react-albus';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {yupResolver} from '@hookform/resolvers/yup';
+import "./wizard.css";
 
 // components
 import PageTitle from '../../components/PageTitle';
-import { VerticalForm, FormInput } from '../../components/';
+import {VerticalForm, FormInput} from '../../components/';
 
 const BasicWizard = () => {
     return (
@@ -19,7 +20,7 @@ const BasicWizard = () => {
                     <Steps>
                         <Step
                             id="login"
-                            render={({ next }) => (
+                            render={({next}) => (
                                 <Form>
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label htmlFor="exampleEmail" column md={3}>
@@ -77,7 +78,7 @@ const BasicWizard = () => {
                         />
                         <Step
                             id="gandalf"
-                            render={({ next, previous }) => (
+                            render={({next, previous}) => (
                                 <Form>
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label htmlFor="fname" column md={3}>
@@ -138,7 +139,7 @@ const BasicWizard = () => {
                         />
                         <Step
                             id="dumbledore"
-                            render={({ previous }) => (
+                            render={({previous}) => (
                                 <Row>
                                     <Col sm={12}>
                                         <div className="text-center">
@@ -155,7 +156,7 @@ const BasicWizard = () => {
 
                                             <div className="mb-3">
                                                 <Form.Check type="checkbox" className="d-inline-block">
-                                                    <Form.Check.Input type="checkbox" />{' '}
+                                                    <Form.Check.Input type="checkbox"/>{' '}
                                                     <Form.Check.Label>
                                                         I agree with the Terms and Conditions
                                                     </Form.Check.Label>
@@ -189,12 +190,13 @@ const BasicWizard = () => {
 
 const WizardWithProgressbar = () => {
     return (
+
         <Card>
             <Card.Body>
                 <h4 className="header-title mb-3">Wizard with Progress bar</h4>
 
                 <Wizard
-                    render={({ step, steps }) => (
+                    render={({step, steps}) => (
                         <>
                             <ProgressBar
                                 animated
@@ -207,7 +209,7 @@ const WizardWithProgressbar = () => {
                             <Steps>
                                 <Step
                                     id="login"
-                                    render={({ next }) => (
+                                    render={({next}) => (
                                         <Form>
                                             <Form.Group as={Row} className="mb-3">
                                                 <Form.Label htmlFor="exampleEmail" column md={3}>
@@ -265,7 +267,7 @@ const WizardWithProgressbar = () => {
                                 />
                                 <Step
                                     id="gandalf"
-                                    render={({ next, previous }) => (
+                                    render={({next, previous}) => (
                                         <Form>
                                             <Form.Group as={Row} className="mb-3">
                                                 <Form.Label htmlFor="fname" column md={3}>
@@ -326,7 +328,7 @@ const WizardWithProgressbar = () => {
                                 />
                                 <Step
                                     id="dumbledore"
-                                    render={({ previous }) => (
+                                    render={({previous}) => (
                                         <Row>
                                             <Col sm={12}>
                                                 <div className="text-center">
@@ -336,14 +338,16 @@ const WizardWithProgressbar = () => {
                                                     <h3 className="mt-0">Thank you !</h3>
 
                                                     <p className="w-75 mb-2 mx-auto">
-                                                        Quisque nec turpis at urna dictum luctus. Suspendisse convallis
-                                                        dignissim eros at volutpat. In egestas mattis dui. Aliquam
+                                                        Quisque nec turpis at urna dictum luctus. Suspendisse
+                                                        convallis
+                                                        dignissim eros at volutpat. In egestas mattis dui.
+                                                        Aliquam
                                                         mattis dictum aliquet.
                                                     </p>
 
                                                     <div className="mb-3">
                                                         <Form.Check type="checkbox" className="d-inline-block">
-                                                            <Form.Check.Input type="checkbox" />{' '}
+                                                            <Form.Check.Input type="checkbox"/>{' '}
                                                             <Form.Check.Label>
                                                                 I agree with the Terms and Conditions
                                                             </Form.Check.Label>
@@ -374,18 +378,19 @@ const WizardWithProgressbar = () => {
                 />
             </Card.Body>
         </Card>
+
     );
 };
 
-const WizardWithFormValidation = () => {
+export const WizardWithFormValidation = () => {
     /*
      * form validation schema
      */
     const validationSchema = yupResolver(
         yup.object().shape({
-            email: yup.string().required('Please enter Email address'),
-            password: yup.string().required('Please enter Password'),
-            checkbox: yup.bool().oneOf([true]),
+            name: yup.string().required('Podaj nazwę produktu'),
+            producer: yup.string().required('Podaj producenta'),
+            description: yup.string().required('Opisz produkt'),
         })
     );
     const validationSchema2 = yupResolver(
@@ -397,140 +402,133 @@ const WizardWithFormValidation = () => {
     );
 
     return (
-        <Card>
-            <Card.Body>
-                <h4 className="header-title mb-3">Wizard with Validation</h4>
-
-                <Wizard
-                    render={({ step, steps }) => (
-                        <>
-                            <ProgressBar
-                                animated
-                                striped
-                                variant="success"
-                                now={((steps.indexOf(step) + 1) / steps.length) * 100}
-                                className="mb-3 progress-sm"
-                            />
-
-                            <Steps>
-                                <Step
-                                    id="login"
-                                    render={({ next }) => (
-                                        <VerticalForm onSubmit={(event, values) => next()} resolver={validationSchema}>
-                                            <FormInput
-                                                label="Username/Email"
-                                                type="email"
-                                                name="email"
-                                                containerClass={'mb-3'}
-                                            />
-                                            <FormInput
-                                                label="Password"
-                                                type="password"
-                                                name="password"
-                                                containerClass={'mb-3'}
-                                            />
-
-                                            <FormInput label="Remember me" type="checkbox" name="checkbox" />
-
-                                            <ul className="list-inline wizard mb-0">
-                                                <li className="next list-inline-item float-end">
-                                                    <Button variant="success" type="submit">
-                                                        Next
-                                                    </Button>
-                                                </li>
-                                            </ul>
-                                        </VerticalForm>
-                                    )}
+        <Container className="wizard-container">
+            <Card className="wizard-inner-container">
+                <Card.Body>
+                    <h4 className="header-title mb-3">Dodaj nowy produkt</h4>
+                    <Wizard
+                        render={({step, steps}) => (
+                            <>
+                                <ProgressBar
+                                    animated
+                                    striped
+                                    variant="success"
+                                    now={((steps.indexOf(step) + 1) / steps.length) * 100}
+                                    className="mb-3 progress-sm"
                                 />
-                                <Step
-                                    id="gandalf"
-                                    render={({ next, previous }) => (
-                                        <VerticalForm onSubmit={(event, values) => next()} resolver={validationSchema2}>
-                                            <FormInput
-                                                label="First Name"
-                                                type="text"
-                                                name="firstname"
-                                                containerClass={'mb-3'}
-                                            />
-                                            <FormInput
-                                                label="Last Name"
-                                                type="text"
-                                                name="lastname"
-                                                containerClass={'mb-3'}
-                                            />
 
-                                            <FormInput
-                                                label="Agree to terms and conditions"
-                                                type="checkbox"
-                                                name="checkbox"
-                                                containerClass={'mb-3'}
-                                            />
+                                <Steps>
+                                    <Step
+                                        id="login"
+                                        render={({next}) => (
+                                            <VerticalForm onSubmit={(event, values) => next()}
+                                                          resolver={validationSchema}>
+                                                <FormInput
+                                                    label="Nazwa produktu"
+                                                    type="text"
+                                                    name="name"
+                                                    containerClass={'mb-3'}
+                                                />
+                                                <FormInput
+                                                    label="Producent"
+                                                    type="text"
+                                                    name="producer"
+                                                    containerClass={'mb-3'}
+                                                />
+                                                <FormInput
+                                                    label="Opis"
+                                                    type="textarea"
+                                                    name="description"
+                                                    containerClass={'mb-3'}
+                                                />
 
-                                            <ul className="list-inline wizard mb-0">
-                                                <li className="previous list-inline-item">
-                                                    <Button onClick={previous} variant="info">
-                                                        Previous
-                                                    </Button>
-                                                </li>
-                                                <li className="next list-inline-item float-end">
-                                                    <Button variant="success" type="submit">
-                                                        Next
-                                                    </Button>
-                                                </li>
-                                            </ul>
-                                        </VerticalForm>
-                                    )}
-                                />
-                                <Step
-                                    id="dumbledore"
-                                    render={({ previous }) => (
-                                        <Row>
-                                            <Col sm={12}>
-                                                <div className="text-center">
-                                                    <h2 className="mt-0">
-                                                        <i className="mdi mdi-check-all"></i>
-                                                    </h2>
-                                                    <h3 className="mt-0">Thank you !</h3>
+                                                <ul className="list-inline wizard mb-0">
+                                                    <li className="next list-inline-item float-end">
+                                                        <Button variant="success" type="submit">
+                                                            Dalej
+                                                        </Button>
+                                                    </li>
+                                                </ul>
+                                            </VerticalForm>
+                                        )}
+                                    />
+                                    <Step
+                                        id="gandalf"
+                                        render={({next, previous}) => (
+                                            <VerticalForm onSubmit={(event, values) => next()}
+                                                          resolver={validationSchema2}>
 
-                                                    <p className="w-75 mb-2 mx-auto">
-                                                        Quisque nec turpis at urna dictum luctus. Suspendisse convallis
-                                                        dignissim eros at volutpat. In egestas mattis dui. Aliquam
-                                                        mattis dictum aliquet.
-                                                    </p>
+                                                <button type="button"
+                                                        className="btn btn-success my-3"><i className="uil-plus font-size-33px"/></button>
 
-                                                    <div className="mb-3">
-                                                        <Form.Check type="checkbox" className="d-inline-block">
-                                                            <Form.Check.Input type="checkbox" />{' '}
-                                                            <Form.Check.Label>
-                                                                I agree with the Terms and Conditions
-                                                            </Form.Check.Label>
-                                                        </Form.Check>
-                                                    </div>
-                                                </div>
-                                            </Col>
-
-                                            <Col sm={12}>
                                                 <ul className="list-inline wizard mb-0">
                                                     <li className="previous list-inline-item">
                                                         <Button onClick={previous} variant="info">
                                                             Previous
                                                         </Button>
                                                     </li>
-
                                                     <li className="next list-inline-item float-end">
-                                                        <Button variant="success">Submit</Button>
+                                                        <Button variant="success" type="submit">
+                                                            Next
+                                                        </Button>
                                                     </li>
                                                 </ul>
-                                            </Col>
-                                        </Row>
-                                    )}
-                                />
-                            </Steps>
-                        </>
-                    )}
-                />
-            </Card.Body>
-        </Card>
+                                            </VerticalForm>
+                                        )}
+                                    />
+                                    <Step
+                                        id="dumbledore"
+                                        render={({previous}) => (
+                                            <Row>
+                                                <Col sm={12}>
+                                                    <div className="text-center">
+                                                        <h2 className="mt-0">
+                                                            <i className="mdi mdi-check-all"></i>
+                                                        </h2>
+                                                        <h3 className="mt-0">Thank you !</h3>
+
+                                                        <p className="w-75 mb-2 mx-auto">
+                                                            Quisque nec turpis at urna dictum luctus. Suspendisse
+                                                            convallis
+                                                            dignissim eros at volutpat. In egestas mattis dui.
+                                                            Aliquam
+                                                            mattis dictum aliquet.
+                                                        </p>
+
+                                                        <div className="mb-3">
+                                                            <Form.Check type="checkbox" className="d-inline-block">
+                                                                <Form.Check.Input type="checkbox"/>{' '}
+                                                                <Form.Check.Label>
+                                                                    I agree with the Terms and Conditions
+                                                                </Form.Check.Label>
+                                                            </Form.Check>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+
+                                                <Col sm={12}>
+                                                    <ul className="list-inline wizard mb-0">
+                                                        <li className="previous list-inline-item">
+                                                            <Button onClick={previous} variant="info">
+                                                                Previous
+                                                            </Button>
+                                                        </li>
+
+                                                        <li className="next list-inline-item float-end">
+                                                            <Button variant="success">Submit</Button>
+                                                        </li>
+                                                    </ul>
+                                                </Col>
+                                            </Row>
+                                        )}
+                                    />
+                                </Steps>
+                            </>
+                        )}
+                    />
+                </Card.Body>
+            </Card>
+        </Container>
     );
 };
 
@@ -539,25 +537,25 @@ const FormWizard = (): React$Element<React$FragmentType> => {
         <>
             <PageTitle
                 breadCrumbItems={[
-                    { label: 'Forms', path: '/ui/forms/wizard' },
-                    { label: 'Form Wizard', path: '/ui/forms/wizard', active: true },
+                    {label: 'Forms', path: '/ui/forms/wizard'},
+                    {label: 'Form Wizard', path: '/ui/forms/wizard', active: true},
                 ]}
                 title={'Form Wizard'}
             />
 
             <Row>
                 <Col xl={6}>
-                    <BasicWizard />
+                    <BasicWizard/>
                 </Col>
 
                 <Col xl={6}>
-                    <WizardWithProgressbar />
+                    <WizardWithProgressbar/>
                 </Col>
             </Row>
 
             <Row>
                 <Col lg={6}>
-                    <WizardWithFormValidation />
+                    <WizardWithFormValidation/>
                 </Col>
             </Row>
         </>

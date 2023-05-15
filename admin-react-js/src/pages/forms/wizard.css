@@ -1,0 +1,15 @@
+.wizard-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 75vh;
+}
+
+.wizard-inner-container{
+    width: 70%;
+    max-width: 800px;
+}
+
+.font-size-33px{
+    font-size: 33px;
+}
