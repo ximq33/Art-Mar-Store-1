@@ -7,70 +7,23 @@ import productImg1 from "../../../assets/images/products/product-5.jpg";
 import productImg2 from "../../../assets/images/products/product-1.jpg";
 import productImg3 from "../../../assets/images/products/product-6.jpg";
 import productImg4 from "../../../assets/images/products/product-3.jpg";
+import {getVariants} from "../../../utils/ApiCalls";
 
 const Product = ({productId}) => {
 
     const [selectedProductImg, setSelectedProductImg] = useState(productImg1);
     const [variants, setVariants] = useState([]);
-    const [initialQtyToBuy, setInitialQtyToBuy] = useState(1);
 
-    /**
-     * Handles the image changes
-     */
+
     const handleImgChange = (e, selectedImg) => {
         e.preventDefault();
         setSelectedProductImg(selectedImg);
         return false;
     };
 
-    const fetchData = async () => {
-        try {
-            // make a GET request to the /variants endpoint
-            const variantsResponse = await fetch(process.env.REACT_APP_API_URL + 'variants/byProductId/' + productId);
-            const variantsJson = await variantsResponse.json();
-
-            // map the variants array to an array of objects with the desired fields
-            const variantsWithoutImages = variantsJson.map(variant => ({
-                id: variant.variantId,
-                name: variant.productName,
-                color: variant.colorName,
-                side: variant.side,
-                pattern: variant.pattern,
-                image: null,
-                added_date: variant.addedDate,
-                price: variant.price,
-                quantity: variant.quantity,
-                status: variant.enabled
-            }));
-
-            // construct a comma-separated list of product IDs
-            const variantIds = variantsWithoutImages.map(variant => variant.id).join("&variantId=");
-
-            // make a GET request to the /images endpoint with the list of product IDs
-            const imagesURL = process.env.REACT_APP_API_URL + `files/ByVariantIds?variantId=${variantIds}`;
-            const imagesResponse = await fetch(imagesURL);
-            const images = await imagesResponse.json();
-
-            // update the variants array with the image data
-            const variantsWithImages = variantsWithoutImages.map(variant => {
-                const image = images.find(image => image.productId === variant.id);
-                if (image) {
-                    return {
-                        ...variant,
-                        image: image.image
-                    };
-                } else {
-                    return variant;
-                }
-            });
-            setVariants(variantsWithImages);
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     useEffect(()=>{
-        fetchData();
+        getVariants(productId).then(result => setVariants(result));
     }, [])
 
     return (

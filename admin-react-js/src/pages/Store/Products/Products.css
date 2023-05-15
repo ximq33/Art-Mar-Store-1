@@ -1,9 +1,16 @@
+.mh-100px{
+    max-height: 100px;
+}
+
 
 .product-image{
     align-self: center;
     padding-top:10px;
     width:130px;
     height: 300px;
+    max-width:140px;
+    max-height: 300px;
+    border-radius: 1px;
 }
 
 .product-hover:hover{
