@@ -63,6 +63,8 @@ const Customers = React.lazy(() => import('../pages/apps/Ecommerce/Customers'));
 const Cart = React.lazy(() => import('../pages/apps/Ecommerce/Cart'));
 const Checkout = React.lazy(() => import('../pages/apps/Ecommerce/Checkout'));
 const Sellers = React.lazy(() => import('../pages/apps/Ecommerce/Sellers'));
+const AddProduct = React.lazy(() => import('../pages/apps/Ecommerce/AddProduct'))
+
 
 // - email
 const Inbox = React.lazy(() => import('../pages/apps/Email/Inbox'));
@@ -229,6 +231,8 @@ const AllRoutes = () => {
                     ],
                 },
 
+
+
                 {
                     path: 'error-404',
                     element: <LoadComponent component={ErrorPageNotFound}/>,
@@ -315,6 +319,10 @@ const AllRoutes = () => {
                                 {
                                     path: 'products',
                                     element: <LoadComponent component={EcommerceProducts}/>,
+                                },
+                                {
+                                    path: 'addProduct',
+                                    element: <LoadComponent component={AddProduct}/>,
                                 },
                                 {
                                     path: 'details',
