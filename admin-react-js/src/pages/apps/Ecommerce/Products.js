@@ -65,6 +65,7 @@ const ProductColumn = ({row}) => {
 
 /* status column render */
 const StatusColumn = ({row}) => {
+    console.log(row.original.id);
     return (
         <>
             <span
@@ -177,12 +178,12 @@ class Products extends React.Component {
     ActionColumn = ({row}) => {
 
 
-        const handleDelete = () => {
+        const handleDelete = (id: string) => {
             const headers = new Headers();
             headers.append('Authorization', `Bearer ${getJwtToken()}`);
+            console.log(id);
 
-
-            const request = new Request(process.env.REACT_APP_API_URL + "variants/" + row.original.id, {
+            const request = new Request(process.env.REACT_APP_API_URL + "variants/" + id, {
                 method: 'DELETE',
                 credentials: "include",
                 headers: headers,
@@ -200,9 +201,9 @@ class Products extends React.Component {
         };
 
 
-        const handleConfirm = () => {
+        const handleConfirm = (id: string) => {
             this.state.isVisible = false;
-            handleDelete();
+            handleDelete(id);
         };
 
 
@@ -235,7 +236,7 @@ class Products extends React.Component {
                     <ConfirmBanner
                         isOpen={this.state.isVisible}
                         onClose={handleCancel}
-                        onConfirm={handleConfirm}
+                        onConfirm={handleConfirm(row.original.id)}
                     />
                 ) : null}
             </>
