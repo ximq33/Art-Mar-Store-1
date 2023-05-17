@@ -56,54 +56,6 @@ const Product = ({productId}) => {
                                         alt="Product-img"
                                     />
                                 </Link>
-                                <Link
-                                    to="#"
-                                    className="ms-2"
-                                    onMouseOver={(e) => {
-                                        handleImgChange(e, productImg2);
-                                    }}
-                                    onClick={(e) => {
-                                        handleImgChange(e, productImg2);
-                                    }}>
-                                    <img
-                                        src={productImg2}
-                                        className="img-fluid img-thumbnail p-2"
-                                        style={{maxWidth: '75px'}}
-                                        alt="Product-img"
-                                    />
-                                </Link>
-                                <Link
-                                    to="#"
-                                    className="ms-2"
-                                    onMouseOver={(e) => {
-                                        handleImgChange(e, productImg3);
-                                    }}
-                                    onClick={(e) => {
-                                        handleImgChange(e, productImg3);
-                                    }}>
-                                    <img
-                                        src={productImg3}
-                                        className="img-fluid img-thumbnail p-2"
-                                        style={{maxWidth: '75px'}}
-                                        alt="Product-img"
-                                    />
-                                </Link>
-                                <Link
-                                    to="#"
-                                    className="ms-2"
-                                    onMouseOver={(e) => {
-                                        handleImgChange(e, productImg4);
-                                    }}
-                                    onClick={(e) => {
-                                        handleImgChange(e, productImg4);
-                                    }}>
-                                    <img
-                                        src={productImg4}
-                                        className="img-fluid img-thumbnail p-2"
-                                        style={{maxWidth: '75px'}}
-                                        alt="Product-img"
-                                    />
-                                </Link>
                             </div>
                         </Col>
                     </Col>
