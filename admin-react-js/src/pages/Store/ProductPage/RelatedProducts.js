@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
+import {convertProductResponseToProductList} from "../../../utils/ApiCalls";
 
 const RelatedProducts = ({productId}): React$Element<any> => {
     const [relatedProducts, setRelatedProducts] = useState([]);
@@ -10,33 +11,7 @@ const RelatedProducts = ({productId}): React$Element<any> => {
         try {
             const APIURL = process.env.REACT_APP_API_URL + "products/relatedOrRandom/" + productId;
             const productResponse = await fetch(APIURL);
-            const productsJson = await productResponse.json();
-
-            const productsWithoutImages = productsJson.map(product => ({
-                id: product.productId,
-                name: product.name,
-                manufacturer: product.manufacturer,
-                price: product.price,
-                variantImageId: product.variantImageId,
-                image: null
-            }))
-
-            const imageIds = productsWithoutImages.map(product => product.variantImageId).join("&imageId=");
-            const imagesURL = process.env.REACT_APP_API_URL + `files/ByImageIds?imageId=${imageIds}`;
-            const imagesResponse = await fetch(imagesURL);
-            const images = await imagesResponse.json();
-
-
-            const productsWithImages = productsWithoutImages.map(product => {
-                const image = images.find(image => image.imageId === product.variantImageId);
-                if (image) {
-                    return {
-                        ...product,
-                        image: image.image
-                    }
-                } else return product;
-            })
-            await setRelatedProducts(productsWithImages);
+            convertProductResponseToProductList(productResponse).then(result => setRelatedProducts(result));
         } catch (error) {
             console.log(error);
         }

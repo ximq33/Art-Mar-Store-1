@@ -13,40 +13,7 @@ export const getAllVariants = async () => {
     try {
         // make a GET request to the /variants endpoint
         const variantsResponse = await fetch(process.env.REACT_APP_API_URL + 'variants');
-        const variantsJson = await variantsResponse.json();
-
-        // map the variants array to an array of objects with the desired fields
-        const variantsWithoutImages = variantsJson.map(variant => ({
-            id: variant.variantId,
-            name: variant.productName,
-            color: variant.colorName,
-            side: variant.side,
-            pattern: variant.pattern,
-            image: null,
-            added_date: variant.addedDate,
-            price: variant.price,
-            quantity: variant.quantity,
-            status: variant.enabled
-        }));
-
-        // construct a comma-separated list of product IDs
-        const variantIds = variantsWithoutImages.map(variant => variant.id).join("&variantId=");
-
-        // make a GET request to the /images endpoint with the list of product IDs
-        const imagesURL = process.env.REACT_APP_API_URL + `files/ByVariantIds?variantId=${variantIds}`;
-        const imagesResponse = await fetch(imagesURL);
-        const images = await imagesResponse.json();
-
-        // update the variants array with the image data
-        return variantsWithoutImages.map(variant => {
-            const image = images.find(image => image.productId === variant.id);
-            if (image) {
-                return {
-                    ...variant,
-                    image: image.image
-                };
-            } else return variant;
-        });
+        return convertVariantResponseToVariantList(variantsResponse);
         // update the state with the updated variants array
 
     } catch (error) {
@@ -58,42 +25,7 @@ export const getVariantsByProductId = async (productId) => {
     try {
         // make a GET request to the /variants endpoint
         const variantsResponse = await fetch(process.env.REACT_APP_API_URL + 'variants/byProductId/' + productId);
-        const variantsJson = await variantsResponse.json();
-
-        // map the variants array to an array of objects with the desired fields
-        const variantsWithoutImages = variantsJson.map(variant => ({
-            id: variant.variantId,
-            name: variant.productName,
-            color: variant.colorName,
-            side: variant.side,
-            pattern: variant.pattern,
-            image: null,
-            added_date: variant.addedDate,
-            price: variant.price,
-            quantity: variant.quantity,
-            status: variant.enabled
-        }));
-
-        // construct a comma-separated list of product IDs
-        const variantIds = variantsWithoutImages.map(variant => variant.id).join("&variantId=");
-
-        // make a GET request to the /images endpoint with the list of product IDs
-        const imagesURL = process.env.REACT_APP_API_URL + `files/ByVariantIds?variantId=${variantIds}`;
-        const imagesResponse = await fetch(imagesURL);
-        const images = await imagesResponse.json();
-
-        // update the variants array with the image data
-        return variantsWithoutImages.map(variant => {
-            const image = images.find(image => image.productId === variant.id);
-            if (image) {
-                return {
-                    ...variant,
-                    image: image.image
-                };
-            } else {
-                return variant;
-            }
-        });
+        return convertVariantResponseToVariantList(variantsResponse);
     } catch (error) {
         console.error(error);
     }
@@ -103,32 +35,7 @@ export const getProducts = async () => {
     try {
         const APIURL = process.env.REACT_APP_API_URL + "products";
         const productResponse = await fetch(APIURL);
-        const productsJson = await productResponse.json();
-
-        const productsWithoutImages = productsJson.map(product => ({
-            id: product.productId,
-            name: product.name,
-            manufacturer: product.manufacturer,
-            price: product.price,
-            variantImageId: product.variantImageId,
-            image: null
-        }))
-
-        const imageIds = productsWithoutImages.map(product => product.variantImageId).join("&imageId=");
-        const imagesURL = process.env.REACT_APP_API_URL + `files/ByImageIds?imageId=${imageIds}`;
-        const imagesResponse = await fetch(imagesURL);
-        const images = await imagesResponse.json();
-
-
-        return productsWithoutImages.map(product => {
-            const image = images.find(image => image.imageId === product.variantImageId);
-            if (image) {
-                return {
-                    ...product,
-                    image: image.image
-                }
-            } else return product;
-        });
+        return convertProductResponseToProductList(productResponse);
     } catch (error) {
         console.log(error);
     }
@@ -155,5 +62,73 @@ export function getRefreshToken() {
 
 export function setRefreshToken(token) {
     sessionStorage.setItem("refreshToken", token)
+}
+
+export const convertProductResponseToProductList = async (response: Response) => {
+    const productsJson = await response.json();
+
+    const productsWithoutImages = productsJson.map(product => ({
+        id: product.productId,
+        name: product.name,
+        manufacturer: product.manufacturer,
+        price: product.price,
+        variantImageId: product.variantImageId,
+        image: null
+    }))
+
+    const imageIds = productsWithoutImages.map(product => product.variantImageId).join("&imageId=");
+    const imagesURL = process.env.REACT_APP_API_URL + `files/ByImageIds?imageId=${imageIds}`;
+    const imagesResponse = await fetch(imagesURL);
+    const images = await imagesResponse.json();
+
+
+    return productsWithoutImages.map(product => {
+        const image = images.find(image => image.imageId === product.variantImageId);
+        if (image) {
+            return {
+                ...product,
+                image: image.image
+            }
+        } else return product;
+    });
+}
+
+export const convertVariantResponseToVariantList = async (response: Response) => {
+    const variantsJson = await response.json();
+
+    // map the variants array to an array of objects with the desired fields
+    const variantsWithoutImages = variantsJson.map(variant => ({
+        id: variant.variantId,
+        name: variant.productName,
+        color: variant.colorName,
+        side: variant.side,
+        pattern: variant.pattern,
+        image: null,
+        added_date: variant.addedDate,
+        price: variant.price,
+        quantity: variant.quantity,
+        status: variant.enabled
+    }));
+
+    // construct a comma-separated list of product IDs
+    const variantIds = variantsWithoutImages.map(variant => variant.id).join("&variantId=");
+
+    // make a GET request to the /images endpoint with the list of product IDs
+    const imagesURL = process.env.REACT_APP_API_URL + `files/ByVariantIds?variantId=${variantIds}`;
+    const imagesResponse = await fetch(imagesURL);
+    const images = await imagesResponse.json();
+
+    // update the variants array with the image data
+    return variantsWithoutImages.map(variant => {
+        const image = images.find(image => image.productId === variant.id);
+        if (image) {
+            return {
+                ...variant,
+                image: image.image
+            };
+        } else {
+            return variant;
+        }
+    });
 }
 
