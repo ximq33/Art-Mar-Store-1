@@ -2,14 +2,58 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 75vh;
+    height: 86vh;
 }
 
-.wizard-inner-container{
+.wizard-inner-container {
     width: 70%;
     max-width: 800px;
+    height: auto;
+    overflow: auto;
 }
 
-.font-size-33px{
-    font-size: 33px;
+.wizard-inner-container.add-variant {
+    height: 750px !important;
+}
+
+.font-size-40px{
+    font-size: 40px;
+}
+
+.scroll{
+    overflow: auto;
+    height: auto;
+}
+
+.scroll.add-variant{
+    overflow: auto;
+    height: 750px;
+}
+
+.wizard-inner-container::-webkit-scrollbar {
+    width: 6px; /* width of the scrollbar */
+}
+
+.height-600px{
+    height: 600px;
+}
+.height-auto{
+    height: auto;
+}
+
+.height-750px{
+    height: 750px !important;
+}
+
+.wizard-inner-container::-webkit-scrollbar-track {
+    background-color: white; /* color of the scrollbar track */
+}
+
+.wizard-inner-container::-webkit-scrollbar-thumb {
+    background-color: rgba(136, 136, 136, 0.47); /* color of the scrollbar thumb */
+    border-radius: 4px; /* border radius of the scrollbar thumb */
+}
+
+.wizard-inner-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* color of the scrollbar thumb on hover */
 }

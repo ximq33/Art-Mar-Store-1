@@ -39,7 +39,7 @@ const MENU_ITEMS = [
         label: 'Produkty',
         isTitle: false,
         icon: 'uil-store',
-        url: '/apps/ecommerce/products',
+        url: '/products',
     },
     {
         key: 'ecommerce-orders',
