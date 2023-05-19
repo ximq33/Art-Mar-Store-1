@@ -1,14 +1,15 @@
 // @flow
-import React from 'react';
-import {Row, Col, Card, Form, Button, ProgressBar, Container} from 'react-bootstrap';
-import {Wizard, Steps, Step} from 'react-albus';
+import React, {useState} from 'react';
+import {Button, Card, Col, Container, Form, ProgressBar, Row} from 'react-bootstrap';
+import {Step, Steps, Wizard} from 'react-albus';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import "./wizard.css";
 
 // components
 import PageTitle from '../../components/PageTitle';
-import {VerticalForm, FormInput} from '../../components/';
+import {FormInput, VerticalForm} from '../../components/';
+import FileUploader from "../../components/FileUploader";
 
 const BasicWizard = () => {
     return (
@@ -386,6 +387,19 @@ export const WizardWithFormValidation = () => {
     /*
      * form validation schema
      */
+
+
+    const [variantList, setVariantList] = useState([]);
+    const [allImages, setAllImages] = useState([]);
+    const [variantCount, setVariantCount] = useState(0);
+    const [variantImages, setVariantImages] = useState([]);
+
+    const handleAddVariantClick = () => {
+        setVariantCount(variantCount + 1);
+        setAllImages(oldArray => [...oldArray, variantImages]);
+    }
+
+
     const validationSchema = yupResolver(
         yup.object().shape({
             name: yup.string().required('Podaj nazwę produktu'),
@@ -402,27 +416,102 @@ export const WizardWithFormValidation = () => {
     );
 
     return (
-        <Container className="wizard-container">
-            <Card className="wizard-inner-container">
-                <Card.Body>
-                    <h4 className="header-title mb-3">Dodaj nowy produkt</h4>
-                    <Wizard
-                        render={({step, steps}) => (
-                            <>
-                                <ProgressBar
-                                    animated
-                                    striped
-                                    variant="success"
-                                    now={((steps.indexOf(step) + 1) / steps.length) * 100}
-                                    className="mb-3 progress-sm"
-                                />
 
-                                <Steps>
-                                    <Step
-                                        id="login"
-                                        render={({next}) => (
+        <Wizard
+            render={({step, steps}) => (
+                <Container className="wizard-container">
+                    <Card className={`wizard-inner-container ${step.id === 'addVariant' ? 'add-variant' : ''}`}>
+                        <Card.Body>
+                            <h4 className="header-title mb-3">Dodaj nowy produkt</h4>
+                            <ProgressBar
+                                animated
+                                striped
+                                variant="success"
+                                now={((steps.indexOf(step) + 1) / steps.length) * 100}
+                                className="mb-3 progress-sm"
+                            />
+
+                            <Steps>
+                                <Step
+                                    id="addProduct"
+                                    render={({next}) => (
+                                        <VerticalForm onSubmit={(event, values) => next()}
+                                                      resolver={validationSchema}>
+                                            <FormInput
+                                                label="Nazwa produktu"
+                                                type="text"
+                                                name="name"
+                                                containerClass={'mt-3'}
+                                            />
+                                            <FormInput
+                                                label="Producent"
+                                                type="text"
+                                                name="producer"
+                                                containerClass={'mb-3'}
+                                            />
+                                            <FormInput
+                                                label="Opis"
+                                                type="textarea"
+                                                name="description"
+                                                containerClass={'mb-3'}
+                                            />
+
+
+                                            <ul className="list-inline wizard mb-0">
+                                                <li className="next list-inline-item float-end">
+                                                    <Button variant="success" type="submit">
+                                                        Dalej
+                                                    </Button>
+                                                </li>
+                                            </ul>
+                                        </VerticalForm>
+
+                                    )}
+                                />
+                                <Step
+                                    id="variants"
+                                    render={({next, previous}) => (
+                                        <VerticalForm onSubmit={(event, values) => next()}
+                                                      resolver={validationSchema2}>
+
+
+                                            <Button onClick={next} type="submit" variant="success"
+                                                    className="btn btn-success my-2 mx-1"><i
+                                                className="uil-plus font-size-40px"/></Button>
+
+                                            <ul className="list-inline wizard mb-0 mt-5">
+                                                <li className="previous list-inline-item">
+                                                    <Button onClick={previous} variant="info">
+                                                        Previous
+                                                    </Button>
+                                                </li>
+                                                <li className="next list-inline-item float-end">
+                                                    <Button variant="success" type="submit">
+                                                        Zakończ
+                                                    </Button>
+                                                </li>
+                                            </ul>
+                                        </VerticalForm>
+                                    )}
+                                />
+                                <Step
+                                    id="addVariant"
+                                    render={({next}) => (
+                                        <div className="add-variant">
                                             <VerticalForm onSubmit={(event, values) => next()}
                                                           resolver={validationSchema}>
+                                                <FileUploader
+                                                    onFileUpload={(files) => {
+                                                        const costam = variantCount;
+                                                        const fileArray = files.map(file => ({
+                                                            variantCounter: costam,
+                                                            file: file,
+                                                        }));
+                                                        setVariantImages(fileArray);
+                                                    }}
+                                                />
+
+
                                                 <FormInput
                                                     label="Nazwa produktu"
                                                     type="text"
@@ -444,91 +533,70 @@ export const WizardWithFormValidation = () => {
 
                                                 <ul className="list-inline wizard mb-0">
                                                     <li className="next list-inline-item float-end">
-                                                        <Button variant="success" type="submit">
+                                                        <Button variant="success" type="submit"
+                                                                onClick={handleAddVariantClick}>
                                                             Dalej
                                                         </Button>
                                                     </li>
                                                 </ul>
+
                                             </VerticalForm>
-                                        )}
-                                    />
-                                    <Step
-                                        id="gandalf"
-                                        render={({next, previous}) => (
-                                            <VerticalForm onSubmit={(event, values) => next()}
-                                                          resolver={validationSchema2}>
+                                        </div>
+                                    )}
+                                />
+                                <Step
+                                    id="finished"
+                                    render={({previous}) => (
+                                        <Row>
+                                            <Col sm={12}>
+                                                <div className="text-center">
+                                                    <h2 className="mt-0">
+                                                        <i className="mdi mdi-check-all"></i>
+                                                    </h2>
+                                                    <h3 className="mt-0">Thank you !</h3>
 
-                                                <button type="button"
-                                                        className="btn btn-success my-3"><i className="uil-plus font-size-33px"/></button>
+                                                    <p className="w-75 mb-2 mx-auto">
+                                                        Quisque nec turpis at urna dictum luctus. Suspendisse
+                                                        convallis
+                                                        dignissim eros at volutpat. In egestas mattis dui.
+                                                        Aliquam
+                                                        mattis dictum aliquet.
+                                                    </p>
 
+                                                    <div className="mb-3">
+                                                        <Form.Check type="checkbox" className="d-inline-block">
+                                                            <Form.Check.Input type="checkbox"/>{' '}
+                                                            <Form.Check.Label>
+                                                                I agree with the Terms and Conditions
+                                                            </Form.Check.Label>
+                                                        </Form.Check>
+                                                    </div>
+                                                </div>
+                                            </Col>
+
+                                            <Col sm={12}>
                                                 <ul className="list-inline wizard mb-0">
                                                     <li className="previous list-inline-item">
                                                         <Button onClick={previous} variant="info">
                                                             Previous
                                                         </Button>
                                                     </li>
+
                                                     <li className="next list-inline-item float-end">
-                                                        <Button variant="success" type="submit">
-                                                            Next
-                                                        </Button>
+                                                        <Button variant="success">Submit</Button>
                                                     </li>
                                                 </ul>
-                                            </VerticalForm>
-                                        )}
-                                    />
-                                    <Step
-                                        id="dumbledore"
-                                        render={({previous}) => (
-                                            <Row>
-                                                <Col sm={12}>
-                                                    <div className="text-center">
-                                                        <h2 className="mt-0">
-                                                            <i className="mdi mdi-check-all"></i>
-                                                        </h2>
-                                                        <h3 className="mt-0">Thank you !</h3>
+                                            </Col>
+                                        </Row>
+                                    )}
+                                />
+                            </Steps>
+                        </Card.Body>
+                    </Card>
+                </Container>
+            )}
+        />
 
-                                                        <p className="w-75 mb-2 mx-auto">
-                                                            Quisque nec turpis at urna dictum luctus. Suspendisse
-                                                            convallis
-                                                            dignissim eros at volutpat. In egestas mattis dui.
-                                                            Aliquam
-                                                            mattis dictum aliquet.
-                                                        </p>
-
-                                                        <div className="mb-3">
-                                                            <Form.Check type="checkbox" className="d-inline-block">
-                                                                <Form.Check.Input type="checkbox"/>{' '}
-                                                                <Form.Check.Label>
-                                                                    I agree with the Terms and Conditions
-                                                                </Form.Check.Label>
-                                                            </Form.Check>
-                                                        </div>
-                                                    </div>
-                                                </Col>
-
-                                                <Col sm={12}>
-                                                    <ul className="list-inline wizard mb-0">
-                                                        <li className="previous list-inline-item">
-                                                            <Button onClick={previous} variant="info">
-                                                                Previous
-                                                            </Button>
-                                                        </li>
-
-                                                        <li className="next list-inline-item float-end">
-                                                            <Button variant="success">Submit</Button>
-                                                        </li>
-                                                    </ul>
-                                                </Col>
-                                            </Row>
-                                        )}
-                                    />
-                                </Steps>
-                            </>
-                        )}
-                    />
-                </Card.Body>
-            </Card>
-        </Container>
     );
 };
 

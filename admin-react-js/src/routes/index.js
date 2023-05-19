@@ -12,6 +12,7 @@ import VerticalLayout from '../layouts/Vertical';
 import DetachedLayout from '../layouts/Detached';
 import HorizontalLayout from '../layouts/Horizontal';
 import FullLayout from '../layouts/Full';
+import AddVariant from "../pages/apps/Ecommerce/AddVariant";
 
 
 // lazy load all the views
@@ -278,6 +279,18 @@ const AllRoutes = () => {
                     ],
                 },
                 {
+                    path: 'products',
+                    element: <LoadComponent component={EcommerceProducts}/>,
+                },
+                {
+                    path: 'products/addProduct',
+                    element: <LoadComponent component={AddProduct}/>,
+                },
+                {
+                    path: 'products/addVariant',
+                    element: <LoadComponent component={AddVariant}/>,
+                },
+                {
                     path: 'apps',
                     children: [
                         {
@@ -316,14 +329,7 @@ const AllRoutes = () => {
                         {
                             path: 'ecommerce',
                             children: [
-                                {
-                                    path: 'products',
-                                    element: <LoadComponent component={EcommerceProducts}/>,
-                                },
-                                {
-                                    path: 'addProduct',
-                                    element: <LoadComponent component={AddProduct}/>,
-                                },
+
                                 {
                                     path: 'details',
                                     element: <LoadComponent component={ProductDetails}/>,
