@@ -1,6 +1,6 @@
 // @flow
 import React, {useState} from 'react';
-import {Button, Card, Col, Container, Form, ProgressBar, Row} from 'react-bootstrap';
+import {Button, Card, Col, Container, Form, FormGroup, ProgressBar, Row} from 'react-bootstrap';
 import {Step, Steps, Wizard} from 'react-albus';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -10,6 +10,9 @@ import "./wizard.css";
 import PageTitle from '../../components/PageTitle';
 import {FormInput, VerticalForm} from '../../components/';
 import FileUploader from "../../components/FileUploader";
+import {Link, redirect} from "react-router-dom";
+import FormCheckInput from "react-bootstrap/FormCheckInput";
+import * as Yup from "yup";
 
 const BasicWizard = () => {
     return (
@@ -389,14 +392,33 @@ export const WizardWithFormValidation = () => {
      */
 
 
-    const [variantList, setVariantList] = useState([]);
+    const [variantList, setVariantList] = useState([{
+        id: null,
+        colorName: null,
+        RGB: null,
+        left: true,
+        right: true
+    }]);
     const [allImages, setAllImages] = useState([]);
     const [variantCount, setVariantCount] = useState(0);
     const [variantImages, setVariantImages] = useState([]);
+    const [error, setError] = useState("");
 
-    const handleAddVariantClick = () => {
-        setVariantCount(variantCount + 1);
+
+
+    const handleAddVariantClick = (values) => {
         setAllImages(oldArray => [...oldArray, variantImages]);
+        setVariantList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[variantCount].id = variantCount;
+            updatedList[variantCount].colorName = values.target.colorName.value;
+            updatedList[variantCount].RGB = values.target.RGB.value;
+            // updatedList[variantCount].left = values.target.left[0].checked;
+            // updatedList[variantCount].right = values.target.left[1].checked;
+            }
+            )
+        console.log(variantList)
+        setVariantCount(variantCount + 1);
     }
 
 
@@ -414,6 +436,25 @@ export const WizardWithFormValidation = () => {
             checkbox: yup.bool().oneOf([true]),
         })
     );
+
+
+    const validationSchema3 = yupResolver(
+        yup.object().shape({
+            colorName: Yup.string().required('Podaj nazwę koloru'),
+            RGB: yup.string().required('Zaznacz kolor'),
+            left: yup.bool(),
+            right: yup.bool(),
+        })
+            .test((obj) => {
+                setError("");
+                if (obj.left || obj.right){
+                    return true;
+                }
+                setError("Zaznacz conajmniej jedną opcję")
+                return false
+            })
+    );
+
 
     return (
 
@@ -441,7 +482,7 @@ export const WizardWithFormValidation = () => {
                                                 label="Nazwa produktu"
                                                 type="text"
                                                 name="name"
-                                                containerClass={'mt-3'}
+                                                containerClass={'my-3'}
                                             />
                                             <FormInput
                                                 label="Producent"
@@ -463,6 +504,11 @@ export const WizardWithFormValidation = () => {
                                                         Dalej
                                                     </Button>
                                                 </li>
+                                                <li>
+                                                    <Link to={"/products"}>
+                                                    <Button variant="danger">Wyjdź</Button>
+                                                    </Link>
+                                                </li>
                                             </ul>
                                         </VerticalForm>
 
@@ -475,14 +521,14 @@ export const WizardWithFormValidation = () => {
                                                       resolver={validationSchema2}>
 
 
-                                            <Button onClick={next} type="submit" variant="success"
+                                            <Button onClick={next} variant="success"
                                                     className="btn btn-success my-2 mx-1"><i
                                                 className="uil-plus font-size-40px"/></Button>
 
                                             <ul className="list-inline wizard mb-0 mt-5">
                                                 <li className="previous list-inline-item">
                                                     <Button onClick={previous} variant="info">
-                                                        Previous
+                                                        Wstecz
                                                     </Button>
                                                 </li>
                                                 <li className="next list-inline-item float-end">
@@ -498,8 +544,10 @@ export const WizardWithFormValidation = () => {
                                     id="addVariant"
                                     render={({next}) => (
                                         <div className="add-variant">
-                                            <VerticalForm onSubmit={(event, values) => next()}
-                                                          resolver={validationSchema}>
+                                            <VerticalForm onSubmit={(event, values) => {
+                                                handleAddVariantClick(values);
+                                                next();}}
+                                                          resolver={validationSchema3}>
                                                 <FileUploader
                                                     onFileUpload={(files) => {
                                                         const costam = variantCount;
@@ -511,39 +559,54 @@ export const WizardWithFormValidation = () => {
                                                     }}
                                                 />
 
+                                                <FormInput type="color"
+                                                           name="RGB"
+                                                           label="Zaznacz kolor"
+                                                           id="html5colorpicker"
+                                                           onChange="clickColor(0, -1, -1, 5)"
+                                                           value="#ff0000"
+                                                           containerClass={'my-3'}
+                                                           className="colorPicker overlay"
+                                                            />
 
-                                                <FormInput
-                                                    label="Nazwa produktu"
-                                                    type="text"
-                                                    name="name"
-                                                    containerClass={'mb-3'}
-                                                />
-                                                <FormInput
-                                                    label="Producent"
-                                                    type="text"
-                                                    name="producer"
-                                                    containerClass={'mb-3'}
-                                                />
-                                                <FormInput
-                                                    label="Opis"
-                                                    type="textarea"
-                                                    name="description"
-                                                    containerClass={'mb-3'}
-                                                />
+                                                    <FormInput
+                                                        label="Nazwa koloru"
+                                                        type="text"
+                                                        name="colorName"
+                                                        containerClass={'mb-3'}
+                                                    />
 
-                                                <ul className="list-inline wizard mb-0">
-                                                    <li className="next list-inline-item float-end">
-                                                        <Button variant="success" type="submit"
-                                                                onClick={handleAddVariantClick}>
-                                                            Dalej
-                                                        </Button>
-                                                    </li>
-                                                </ul>
+
+                                                    <FormInput
+                                                        name="left"
+                                                        defaultChecked="true"
+                                                        type="checkbox"
+                                                        containerClass={'mb-3'}
+                                                        label="Lewe"
+                                                    />
+                                                    <FormInput
+                                                        name="right"
+                                                        defaultChecked="true"
+                                                        type="checkbox"
+                                                        containerClass={'mb-3'}
+                                                        label="Prawe"
+                                                    />
+                                                    {error ? (
+                                                        <p className="text-danger">{error}</p>
+                                                    ) : ""}
+
+                                                    <ul className="list-inline wizard mb-0">
+                                                        <li className="next list-inline-item float-end">
+                                                            <Button variant="success" type="submit">
+                                                                Dalej
+                                                            </Button>
+                                                        </li>
+                                                    </ul>
 
                                             </VerticalForm>
                                         </div>
-                                    )}
-                                />
+                                        )}
+                                    />
                                 <Step
                                     id="finished"
                                     render={({previous}) => (
@@ -597,37 +660,38 @@ export const WizardWithFormValidation = () => {
             )}
         />
 
-    );
+);
 };
 
-const FormWizard = (): React$Element<React$FragmentType> => {
-    return (
+const FormWizard = (): React$Element
+    <React$FragmentType> => {
+        return (
         <>
-            <PageTitle
-                breadCrumbItems={[
-                    {label: 'Forms', path: '/ui/forms/wizard'},
-                    {label: 'Form Wizard', path: '/ui/forms/wizard', active: true},
-                ]}
-                title={'Form Wizard'}
-            />
+        <PageTitle
+        breadCrumbItems={[
+    {label: 'Forms', path: '/ui/forms/wizard'},
+    {label: 'Form Wizard', path: '/ui/forms/wizard', active: true},
+        ]}
+        title={'Form Wizard'}
+        />
 
-            <Row>
-                <Col xl={6}>
-                    <BasicWizard/>
-                </Col>
+        <Row>
+        <Col xl={6}>
+        <BasicWizard/>
+        </Col>
 
-                <Col xl={6}>
-                    <WizardWithProgressbar/>
-                </Col>
-            </Row>
+        <Col xl={6}>
+        <WizardWithProgressbar/>
+        </Col>
+        </Row>
 
-            <Row>
-                <Col lg={6}>
-                    <WizardWithFormValidation/>
-                </Col>
-            </Row>
+        <Row>
+        <Col lg={6}>
+        <WizardWithFormValidation/>
+        </Col>
+        </Row>
         </>
-    );
-};
+        );
+    };
 
-export default FormWizard;
+        export default FormWizard;
