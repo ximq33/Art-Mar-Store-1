@@ -57,3 +57,34 @@
 .wizard-inner-container::-webkit-scrollbar-thumb:hover {
     background-color: #555; /* color of the scrollbar thumb on hover */
 }
+
+
+
+.colorPicker {
+    display: block;
+    border: none;
+    border-radius: 5px;
+    font-size: 35px;
+    width: 70px;
+}
+
+.overlay {
+    position: relative;
+}
+
+.overlay:before {
+    content: "";
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    opacity: 0;
+    background-color: rgba(211, 200, 200, 0.47);
+    border-radius: 5px;
+    transition: opacity 0.15s ease;
+}
+
+.overlay:hover:before {
+    opacity: 1;
+}

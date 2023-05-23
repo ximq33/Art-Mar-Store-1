@@ -302,7 +302,7 @@ class Products extends React.Component {
                                     searchBoxClass="mb-2"
                                 />
                             </Card.Body>
-                        </Card>
+                        </Card>dnm
                     </Col>
                 </Row>
             </>
