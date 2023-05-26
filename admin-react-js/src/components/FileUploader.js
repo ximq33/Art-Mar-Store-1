@@ -52,7 +52,7 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
      */
     const removeFile = (file) => {
         const newFiles = [...selectedFiles];
-        newFiles.splice(newFiles.indexOf(file), 1);
+        newFiles.splice(newFiles.at(file), 1);
         setSelectedFiles(newFiles);
     };
 
@@ -62,13 +62,9 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
                 {({ getRootProps, getInputProps }) => (
                     <div className="dropzone">
                         <div className="dz-message needsclick" {...getRootProps()}>
-                            <input {...getInputProps()} />
+                            <input {...getInputProps()}  />
                             <i className="h3 text-muted dripicons-cloud-upload"></i>
-                            <h5>Drop files here or click to upload.</h5>
-                            <span className="text-muted font-13">
-                                (This is just a demo dropzone. Selected files are <strong>not</strong> actually
-                                uploaded.)
-                            </span>
+                            <h5>Przeciągnij obrazy lub kliknij aby dodać </h5>
                         </div>
                     </div>
                 )}
@@ -85,7 +81,7 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
                                             <Col className="col-auto">
                                                 <img
                                                     data-dz-thumbnail=""
-                                                    className="avatar-sm rounded bg-light"
+                                                    className="avatar-md rounded bg-light"
                                                     alt={f.name}
                                                     src={f.preview}
                                                 />
