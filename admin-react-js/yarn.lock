@@ -8070,6 +8070,7 @@ __metadata:
     react-scripts: ^5.0.1
     react-select: ^5.2.2
     react-simplemde-editor: ^5.0.2
+    react-slider: ^2.0.4
     react-table: ^7.7.0
     react-text-mask: ^5.4.3
     redux: ^4.1.2
@@ -12421,6 +12422,17 @@ __metadata:
     react: ">=16.8.2"
     react-dom: ">=16.8.2"
   checksum: 3e47019f8ca47875fd750b7af975c0a485372d494434d8b251a0222aab810f94fda6807916d7aac3be82fbd8173d2c1a116ec91ac6fd2033f635f053297ed266
+  languageName: node
+  linkType: hard
+
+"react-slider@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "react-slider@npm:2.0.4"
+  dependencies:
+    prop-types: ^15.8.1
+  peerDependencies:
+    react: ^16 || ^17 || ^18
+  checksum: d7a70eba03017d2e35dc54430afefb1dad8ad2a1f3c39fbbdfdd4d48d41aea9fddf9ff006207a2ad2cf1f1b76295efddba3d23b2af2b8a3d0d1b2aa44390bbf7
   languageName: node
   linkType: hard
 

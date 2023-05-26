@@ -1,10 +1,9 @@
 // @flow
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Button, Card, Col, Container, Form, FormGroup, ProgressBar, Row} from 'react-bootstrap';
 import {Step, Steps, Wizard} from 'react-albus';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
-import "./wizard.css";
 
 // components
 import PageTitle from '../../components/PageTitle';
@@ -13,6 +12,8 @@ import FileUploader from "../../components/FileUploader";
 import {Link, redirect} from "react-router-dom";
 import FormCheckInput from "react-bootstrap/FormCheckInput";
 import * as Yup from "yup";
+import Nouislider from "nouislider-react";
+import Slider from "../uikit/Slider";
 
 const BasicWizard = () => {
     return (
@@ -387,10 +388,6 @@ const WizardWithProgressbar = () => {
 };
 
 export const WizardWithFormValidation = () => {
-    /*
-     * form validation schema
-     */
-
 
     const [variantList, setVariantList] = useState([{
         id: null,
@@ -403,7 +400,28 @@ export const WizardWithFormValidation = () => {
     const [variantCount, setVariantCount] = useState(0);
     const [variantImages, setVariantImages] = useState([]);
     const [error, setError] = useState("");
+    const [leftWidthValues, setLeftWidthValues] = useState([]);
+    const [selectedVals, setSelectedVals] = useState(60);
 
+
+
+
+    const header = (stepId) => {
+        switch (stepId) {
+            case "addProduct": return "dodaj nowy produkt";
+            case "variants": return "dodaj warianty";
+            case "addVariant": return "dodaj wariant";
+            case "addWidth": return "ustaw szerokości";
+        }
+    }
+
+
+    const onSlideFunc = (value) => {
+        console.log(value)
+        setLeftWidthValues([...leftWidthValues, value])
+        console.log("dupson " + leftWidthValues)
+        setSelectedVals(value)
+    }
 
 
     const handleAddVariantClick = (values) => {
@@ -413,9 +431,7 @@ export const WizardWithFormValidation = () => {
             updatedList[variantCount].id = variantCount;
             updatedList[variantCount].colorName = values.target.colorName.value;
             updatedList[variantCount].RGB = values.target.RGB.value;
-            // updatedList[variantCount].left = values.target.left[0].checked;
-            // updatedList[variantCount].right = values.target.left[1].checked;
-            }
+             }
             )
         console.log(variantList)
         setVariantCount(variantCount + 1);
@@ -442,6 +458,11 @@ export const WizardWithFormValidation = () => {
         yup.object().shape({
             colorName: Yup.string().required('Podaj nazwę koloru'),
             RGB: yup.string().required('Zaznacz kolor'),
+        })
+    );
+
+    const validationSchema4 = yupResolver(
+        yup.object().shape({
             left: yup.bool(),
             right: yup.bool(),
         })
@@ -456,6 +477,8 @@ export const WizardWithFormValidation = () => {
     );
 
 
+
+
     return (
 
         <Wizard
@@ -463,7 +486,7 @@ export const WizardWithFormValidation = () => {
                 <Container className="wizard-container">
                     <Card className={`wizard-inner-container ${step.id === 'addVariant' ? 'add-variant' : ''}`}>
                         <Card.Body>
-                            <h4 className="header-title mb-3">Dodaj nowy produkt</h4>
+                            <h4 className="header-title mb-3">{header(step.id)}</h4>
                             <ProgressBar
                                 animated
                                 striped
@@ -473,6 +496,7 @@ export const WizardWithFormValidation = () => {
                             />
 
                             <Steps>
+
                                 <Step
                                     id="addProduct"
                                     render={({next}) => (
@@ -542,13 +566,16 @@ export const WizardWithFormValidation = () => {
                                 />
                                 <Step
                                     id="addVariant"
-                                    render={({next}) => (
+                                    render={({next, previous}) => (
                                         <div className="add-variant">
+
                                             <VerticalForm onSubmit={(event, values) => {
                                                 handleAddVariantClick(values);
                                                 next();}}
                                                           resolver={validationSchema3}>
+
                                                 <FileUploader
+                                                    accept="image/*"
                                                     onFileUpload={(files) => {
                                                         const costam = variantCount;
                                                         const fileArray = files.map(file => ({
@@ -563,9 +590,7 @@ export const WizardWithFormValidation = () => {
                                                            name="RGB"
                                                            label="Zaznacz kolor"
                                                            id="html5colorpicker"
-                                                           onChange="clickColor(0, -1, -1, 5)"
-                                                           value="#ff0000"
-                                                           containerClass={'my-3'}
+                                                           containerClass={'my-3 justify-content-center'}
                                                            className="colorPicker overlay"
                                                             />
 
@@ -576,37 +601,105 @@ export const WizardWithFormValidation = () => {
                                                         containerClass={'mb-3'}
                                                     />
 
+                                                        <ul className="list-inline wizard my-2">
+                                                            <li className="previous list-inline-item" >
+                                                                <Button onClick={previous} variant="info">
+                                                                    Wstecz
+                                                                </Button>
+                                                            </li>
+                                                         <li className="next list-inline-item float-end">
+                                                              <Button variant="success" type="submit">
+                                                                    Dalej
+                                                             </Button>
+                                                          </li>
+                                                      </ul>
 
-                                                    <FormInput
-                                                        name="left"
-                                                        defaultChecked="true"
-                                                        type="checkbox"
-                                                        containerClass={'mb-3'}
-                                                        label="Lewe"
-                                                    />
-                                                    <FormInput
-                                                        name="right"
-                                                        defaultChecked="true"
-                                                        type="checkbox"
-                                                        containerClass={'mb-3'}
-                                                        label="Prawe"
-                                                    />
-                                                    {error ? (
-                                                        <p className="text-danger">{error}</p>
-                                                    ) : ""}
-
-                                                    <ul className="list-inline wizard mb-0">
-                                                        <li className="next list-inline-item float-end">
-                                                            <Button variant="success" type="submit">
-                                                                Dalej
-                                                            </Button>
-                                                        </li>
-                                                    </ul>
 
                                             </VerticalForm>
                                         </div>
                                         )}
                                     />
+                                <Step
+                                    id="addWidth"
+                                    render={({next, previous}) => (
+                                        <div className="add-variant">
+
+                                            <VerticalForm onSubmit={(event, values) => {
+                                                handleAddVariantClick(values);
+                                                next();}}
+                                                          resolver={validationSchema4}>
+
+                                                <FormInput
+                                                    name="left"
+                                                    defaultChecked="true"
+                                                    type="checkbox"
+                                                    containerClass={'form-check-inline mx-1 mb-3 col-5'}
+                                                    label="Lewe"
+                                                />
+                                                <FormInput
+                                                    name="right"
+                                                    defaultChecked="true"
+                                                    type="checkbox"
+                                                    containerClass={'form-check-inline mx-1 col-5'}
+                                                    label="Prawe"
+                                                />
+
+                                                <Nouislider
+                                                    range={{min: 60, max: 100}}
+                                                    start={[60]}
+                                                    step={1}
+                                                    connect
+                                                    onSlide={(value) => onSlideFunc(value)}
+                                                />
+                                                <p className="mt-2 mb-0">
+                                                    {selectedVals ? (
+                                                        <span>{selectedVals}</span>) : null}
+                                                </p>
+
+
+                                                {/*<FormInput*/}
+                                                {/*    id="gowno"*/}
+                                                {/*    type="range"*/}
+                                                {/*    label="Szerokość"*/}
+                                                {/*    min="60"*/}
+                                                {/*    max="100"*/}
+                                                {/*    step="1"*/}
+                                                {/*    onChange={(value) => setLeftWidthValues(value)}*/}
+                                                {/*    containerClass={'form-check-inline col-5 border-0'}*/}
+                                                {/*/>*/}
+                                                {/*<FormInput*/}
+                                                {/*    type="range"*/}
+                                                {/*    label="Szerokość"*/}
+                                                {/*    min="60"*/}
+                                                {/*    max="100"*/}
+                                                {/*    step="1"*/}
+                                                {/*    containerClass={'form-check-inline col-5 border-0'}*/}
+                                                {/*/>*/}
+
+                                                {error ? (
+                                                    <p className="text-danger m-0">{error}</p>
+                                                ) : <p></p>}
+
+
+                                                <ul className="list-inline wizard m-1">
+                                                    <li className="previous list-inline-item" >
+                                                        <Button onClick={previous} variant="info">
+                                                            Wstecz
+                                                        </Button>
+                                                    </li>
+                                                    <li className="next list-inline-item float-end">
+                                                        <Button variant="success" type="submit">
+                                                            Dalej
+                                                        </Button>
+                                                    </li>
+                                                </ul>
+
+
+                                            </VerticalForm>
+                                        </div>
+
+                                    )}
+                                />
                                 <Step
                                     id="finished"
                                     render={({previous}) => (
