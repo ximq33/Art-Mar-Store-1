@@ -51,13 +51,13 @@ class VariantController {
 
 
         Variant variant = variantService.registerNewVariant(
+                requestDto.variantName(),
                 requestDto.price(),
                 requestDto.quantity(),
                 requestDto.enabled(),
                 requestDto.manufacturer(),
                 requestDto.color(),
-                requestDto.side(),
-                requestDto.pattern(),
+                requestDto.doorOptions(),
                 requestDto.productId(),
                 productService.findById(requestDto.productId()).orElseThrow().name()
         );
@@ -76,8 +76,8 @@ class VariantController {
 
         Optional<String> productNameOpt = Optional.of(productService.findById(new ProductId(updateDto.getProductId().orElseThrow())).orElseThrow().name());
 
-        return ResponseEntity.of(variantService.updateVariant(id, updateDto.getPrice(), updateDto.getQuantity(), updateDto.isDisabled(),
-                updateDto.getManufacturer(), updateDto.getColorName(), updateDto.getRGBvalue(), updateDto.getSide(), updateDto.getPattern(),
+        return ResponseEntity.of(variantService.updateVariant(id, updateDto.getVariantName(), updateDto.getPrice(), updateDto.getQuantity(), updateDto.isDisabled(),
+                updateDto.getManufacturer(), updateDto.getLeftOptions(), updateDto.getRightOptions(),updateDto.getColorName(), updateDto.getRGBvalue(),
                 updateDto.getProductId(), productNameOpt).map(VariantResponseDto::fromDomain));
     }
 

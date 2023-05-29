@@ -5,10 +5,14 @@ import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 class VariantUpdateDto{
+        @Length(min = 1, max = 100)
+
+        private final String variantName;
         @Positive(message = "price has to be positive")
         private final BigDecimal price;
         @PositiveOrZero(message = "quantity cannot be negative")
@@ -20,26 +24,28 @@ class VariantUpdateDto{
         private final String colorName;
         @Length(min = 1, max = 100)
         private final String RGBvalue;
-        @Length(min = 1, max = 100)
-        private final String side;
-        @Length(min = 1, max = 100)
-        private final String pattern;
+        private final Map<Integer, Integer> leftOptions;
+        private final Map<Integer, Integer> rightOptions;
         @Length(min = 1, max = 100)
         private final String productId;
 
 
-        public VariantUpdateDto(BigDecimal price, Integer quantity, Boolean disabled, String manufacturer, String colorName, String RGBvalue, String side, String pattern, String productId) {
+        public VariantUpdateDto(String variantName, BigDecimal price, Integer quantity, Boolean disabled, String manufacturer, String colorName, String RGBvalue, Map<Integer, Integer> leftOptions, Map<Integer, Integer> rightOptions, String productId) {
+                this.variantName = variantName;
                 this.price = price;
                 this.quantity = quantity;
                 this.enabled = disabled;
                 this.manufacturer = manufacturer;
                 this.colorName = colorName;
                 this.RGBvalue = RGBvalue;
-                this.side = side;
-                this.pattern = pattern;
+                this.leftOptions = leftOptions;
+                this.rightOptions = rightOptions;
                 this.productId = productId;
         }
 
+        public Optional<String> getVariantName(){
+                return Optional.ofNullable(variantName);
+        }
         public Optional<BigDecimal> getPrice() {
                 return Optional.ofNullable(price);
         }
@@ -63,43 +69,44 @@ class VariantUpdateDto{
         public Optional<String> getRGBvalue() {
                 return Optional.ofNullable(RGBvalue);
         }
-
-        public Optional<String> getSide() {
-                return Optional.ofNullable(side);
+        public Optional<Map<Integer, Integer>> getLeftOptions(){
+                return Optional.ofNullable(leftOptions);
+        }
+        public Optional<Map<Integer,Integer>> getRightOptions(){
+                return Optional.ofNullable(rightOptions);
         }
 
-        public Optional<String> getPattern() {
-                return Optional.ofNullable(pattern);
-        }
 
         public Optional<String> getProductId() {
                 return Optional.ofNullable(productId);
         }
+
 
         @Override
         public boolean equals(Object o) {
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
                 VariantUpdateDto that = (VariantUpdateDto) o;
-                return Objects.equals(price, that.price) && Objects.equals(quantity, that.quantity) && Objects.equals(enabled, that.enabled) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(colorName, that.colorName) && Objects.equals(RGBvalue, that.RGBvalue) && Objects.equals(side, that.side) && Objects.equals(pattern, that.pattern) && Objects.equals(productId, that.productId);
+                return Objects.equals(variantName, that.variantName) && Objects.equals(price, that.price) && Objects.equals(quantity, that.quantity) && Objects.equals(enabled, that.enabled) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(colorName, that.colorName) && Objects.equals(RGBvalue, that.RGBvalue) && Objects.equals(leftOptions, that.leftOptions) && Objects.equals(rightOptions, that.rightOptions) && Objects.equals(productId, that.productId);
         }
 
         @Override
         public int hashCode() {
-                return Objects.hash(price, quantity, enabled, manufacturer, colorName, RGBvalue, side, pattern, productId);
+                return Objects.hash(variantName, price, quantity, enabled, manufacturer, colorName, RGBvalue, leftOptions, rightOptions, productId);
         }
 
         @Override
         public String toString() {
                 return "VariantUpdateDto{" +
-                        "price=" + price +
+                        "variantName='" + variantName + '\'' +
+                        ", price=" + price +
                         ", quantity=" + quantity +
                         ", enabled=" + enabled +
                         ", manufacturer='" + manufacturer + '\'' +
                         ", colorName='" + colorName + '\'' +
                         ", RGBvalue='" + RGBvalue + '\'' +
-                        ", side='" + side + '\'' +
-                        ", pattern='" + pattern + '\'' +
+                        ", leftOptions=" + leftOptions +
+                        ", rightOptions=" + rightOptions +
                         ", productId='" + productId + '\'' +
                         '}';
         }

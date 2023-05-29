@@ -1,17 +1,18 @@
 package com.ArtMar_Store.Api.api.variants;
 
-import com.ArtMar_Store.Api.domain.variants.Color;
 import com.ArtMar_Store.Api.domain.products.ProductId;
+import com.ArtMar_Store.Api.domain.variants.Color;
+import com.ArtMar_Store.Api.domain.variants.DoorOptions;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
-
 import java.math.BigDecimal;
 
 public record VariantRequestDto(
-
+        @NotNull(message = "variant name cannot be null")
+        String variantName,
         @NotNull(message = "price cannot be null")
         @Positive(message = "price has to be positive")
         BigDecimal price,
@@ -24,10 +25,8 @@ public record VariantRequestDto(
         String manufacturer,
         @NotNull(message = "color cannot be null")
         Color color,
-        @NotNull(message = "side cannot be null")
-        String side,
-        @NotNull(message = "pattern cannot be null")
-        String pattern,
+        @NotNull(message = "variant options cannot be null")
+        DoorOptions doorOptions,
         @NotNull(message = "product ID cannot be null")
         ProductId productId
 ) {
