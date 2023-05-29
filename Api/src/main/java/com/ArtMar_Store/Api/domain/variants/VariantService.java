@@ -6,9 +6,11 @@ import com.ArtMar_Store.Api.domain.products.ProductService;
 import com.ArtMar_Store.Api.domain.products.alreadyExistsException;
 import com.ArtMar_Store.Api.infrastructure.VariantRepository;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -26,24 +28,24 @@ public class VariantService {
         this.productService = productService;
     }
 
-    public List<Variant> getAllVariants(){
+    public List<Variant> getAllVariants() {
         return variantRepository.findAll();
     }
 
-    public Variant registerNewVariant(BigDecimal price, int quantity, boolean disabled,
-                                      String manufacturer, Color color, String side, String pattern,
-                                      ProductId productId, String productName){
+    public Variant registerNewVariant(String variantName, BigDecimal price, int quantity, boolean disabled,
+                                      String manufacturer, Color color, VariantOptions variantOptions,
+                                      ProductId productId, String productName) {
 
         Product product = productService.findById(productId).orElseThrow();
 
-        if (product.price() == null || product.price().compareTo(price) > 0){
+        if (product.price() == null || product.price().compareTo(price) > 0) {
             productService.updateProduct(productId, Optional.empty(), Optional.empty(), Optional.of(price), Optional.empty(), Optional.empty());
         }
 
 
-        if (!variantRepository.existsByManufacturerAndColorAndSideAndPatternAndProductId(manufacturer, color, side, pattern, productId)){
-            return variantRepository.save(new Variant(variantIdSupplier.get(),price, quantity, disabled,
-                    manufacturer, color, side, pattern, productId, productName, LocalDateTime.now()));
+        if (!variantRepository.existsByManufacturerAndVariantOptionsAndProductId(manufacturer, variantOptions, productId)) {
+            return variantRepository.save(new Variant(variantIdSupplier.get(),variantName, price, quantity, disabled,
+                    manufacturer, color, variantOptions, productId, productName, LocalDateTime.now()));
         }
         throw new alreadyExistsException("Same variant already exists");
     }
@@ -52,43 +54,49 @@ public class VariantService {
         variantRepository.deleteById(variantId);
     }
 
-    public Optional<Variant> getVariantById(String id){
+    public Optional<Variant> getVariantById(String id) {
         return variantRepository.findById(new VariantId(id));
     }
 
+
     public Optional<Variant> updateVariant(
             String variantId,
+            Optional<String> variantNameUpdate,
             Optional<BigDecimal> priceUpdate,
             Optional<Integer> quantityUpdate,
             Optional<Boolean> disabledUpdate,
             Optional<String> manufacturerUpdate,
+            Optional<Map<Integer, Integer>> leftUpdate,
+            Optional<Map<Integer, Integer>> rightUpdate,
             Optional<String> colorNameUpdate,
             Optional<String> RGBUpdate,
-            Optional<String> sideUpdate,
-            Optional<String> patternUpdate,
             Optional<String> productIdUpdate,
             Optional<String> productNameUpdate
-    ){
+    ) {
 
         Optional<ProductId> productIdOpt = productIdUpdate.map(ProductId::new);
 
+        DoorOptions oldDoorOptions = (DoorOptions) variantRepository.findById(new VariantId(variantId)).orElseThrow().variantOptions();
 
         return variantRepository.findById(new VariantId(variantId))
                 .map(oldVariant ->
                         new Variant(new VariantId(variantId),
+                                variantNameUpdate.orElseGet(oldVariant::variantName),
                                 priceUpdate.orElseGet(oldVariant::price),
                                 quantityUpdate.orElseGet(oldVariant::quantity),
                                 disabledUpdate.orElseGet(oldVariant::enabled),
                                 manufacturerUpdate.orElseGet(oldVariant::manufacturer),
                                 new Color(colorNameUpdate.orElse(oldVariant.color().colorName()), RGBUpdate.orElse(oldVariant.color().RGBvalue())),
-                                sideUpdate.orElseGet(oldVariant::side),
-                                patternUpdate.orElseGet(oldVariant::pattern),
+                                new DoorOptions(leftUpdate.orElse(oldDoorOptions.left()),
+                                        rightUpdate.orElse(oldDoorOptions.right())
+                                ),
                                 productIdOpt.orElseGet(oldVariant::productId),
                                 productNameUpdate.orElseGet(oldVariant::productName),
                                 oldVariant.addedDate()
                         )
                 )
                 .map(variantRepository::save);
+
     }
 
 

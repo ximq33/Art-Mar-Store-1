@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 public record Variant(
         @MongoId
         VariantId variantId,
+        String variantName,
         BigDecimal price,
         Integer quantity,
         Boolean enabled,
         String manufacturer,
         Color color,
-        String side,
-        String pattern,
+        VariantOptions variantOptions,
         ProductId productId,
         String productName,
         LocalDateTime addedDate) {
