@@ -7,6 +7,7 @@ import Dropzone from 'react-dropzone';
 type FileUploaderProps = {
     onFileUpload?: (files: any) => void,
     showPreview?: boolean,
+    onFileRemove?: (file: any) => void,
 };
 
 const FileUploader = (props: FileUploaderProps): React$Element<any> => {
@@ -54,6 +55,9 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
         const newFiles = [...selectedFiles];
         newFiles.splice(newFiles.at(file), 1);
         setSelectedFiles(newFiles);
+
+        if(props.onFileRemove) props.onFileRemove(file);
+
     };
 
     return (
