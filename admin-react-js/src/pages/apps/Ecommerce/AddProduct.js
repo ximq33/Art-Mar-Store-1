@@ -8,6 +8,7 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import FileUploader from "../../../components/FileUploader";
 import "./wizard.css";
+import ReactDOM from 'react-dom';
 
 
 const AddProduct = (): React$Element<React$FragmentType> => {
@@ -18,15 +19,21 @@ const AddProduct = (): React$Element<React$FragmentType> => {
         left: true,
         right: true
     }]);
+    const [product, setProduct] = useState({});
     const [allImages, setAllImages] = useState([]);
     const [variantCount, setVariantCount] = useState(0);
     const [variantImages, setVariantImages] = useState([]);
     const [error, setError] = useState("");
+
+    const [variant, setVariant] = useState({});
     const [leftWidthValues, setLeftWidthValues] = useState([]);
+    const [rightWidthValues, setRightWidthValues] = useState([]);
+
     const [selectedValLeft, setSelectedValLeft] = useState(80);
     const [selectedValRight, setSelectedValRight] = useState(80);
     const [leftChecked, setLeftChecked] = useState(true);
     const [rightChecked, setRightChecked] = useState(true);
+    const [isConnectPressed, setIsConnectPressed] = useState(true);
 
     const header = (stepId) => {
         switch (stepId) {
@@ -44,7 +51,7 @@ const AddProduct = (): React$Element<React$FragmentType> => {
 
     const onSlideFunc = (value) => {
         console.log(value)
-        setLeftWidthValues([...leftWidthValues, value])
+
         console.log("dupson " + leftWidthValues)
         setSelectedVals2(value)
     }
@@ -86,20 +93,6 @@ const AddProduct = (): React$Element<React$FragmentType> => {
         })
     );
 
-    const validationSchema4 = yupResolver(
-        yup.object().shape({
-            left: yup.bool(),
-            right: yup.bool(),
-        })
-            .test((obj) => {
-                setError("");
-                if (leftChecked || rightChecked) {
-                    return true;
-                }
-                setError("Zaznacz conajmniej jedną opcję")
-                return false
-            })
-    );
 
     return (
         <Wizard
@@ -120,7 +113,14 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                 <Step
                                     id="addProduct"
                                     render={({next}) => (
-                                        <VerticalForm onSubmit={(event, values) => next()}
+                                        <VerticalForm onSubmit={(event, values) => {
+                                            setProduct(() => ({
+                                                name: values.target.name.value,
+                                                producer: values.target.producer.value,
+                                                description: values.target.description.value
+                                            }));
+                                            next();
+                                        }}
                                                       resolver={validationSchema}>
                                             <FormInput
                                                 label="Nazwa produktu"
@@ -187,29 +187,49 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                         <div className="add-variant">
 
                                             <VerticalForm onSubmit={(event, values) => {
-                                                handleAddVariantClick(values);
+                                                setVariant(() => ({
+                                                    VariantName: values.target.VariantName.value,
+                                                    color: {
+                                                        RgbValue: values.target.RGB.value,
+                                                        colorName: values.target.colorName.value
+                                                    }
+
+                                                }))
                                                 next();
                                             }}
                                                           resolver={validationSchema3}>
 
+                                                <FormInput
+                                                    label="Nazwa wariantu"
+                                                    type="text"
+                                                    name="VariantName"
+                                                    containerClass={'mb-3'}
+                                                />
+
                                                 <FileUploader
                                                     accept="image/*"
                                                     onFileUpload={(files) => {
-                                                        const costam = variantCount;
+                                                        const count = variantCount;
                                                         const fileArray = files.map(file => ({
-                                                            variantCounter: costam,
+                                                            variantCounter: count,
                                                             file: file,
                                                         }));
                                                         setVariantImages(fileArray);
                                                     }}
+                                                    onFileRemove={(file) => {
+                                                        const updatedImages = variantImages.filter((_, index) => index !== file);
+                                                        setVariantImages(updatedImages);
+                                                    }}
+
                                                 />
 
-                                                <FormInput type="color"
-                                                           name="RGB"
-                                                           label="Zaznacz kolor"
-                                                           id="html5colorpicker"
-                                                           containerClass={'my-3 justify-content-center'}
-                                                           className="colorPicker overlay"
+                                                <FormInput
+                                                    type="color"
+                                                    name="RGB"
+                                                    label="Zaznacz kolor"
+                                                    id="html5colorpicker"
+                                                    containerClass={'my-3 justify-content-center'}
+                                                    className="colorPicker overlay"
                                                 />
 
                                                 <FormInput
@@ -242,74 +262,134 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                         <div className="add-variant">
 
                                             <VerticalForm onSubmit={(event, values) => {
-                                                handleAddVariantClick(values);
-                                                next();
-                                            }}
-                                                          resolver={validationSchema4}>
-
-                                                <FormInput
-                                                    name="left"
-                                                    defaultChecked="true"
-                                                    type="checkbox"
-                                                    containerClass={'form-check-inline mb-3 col-md-5'}
-                                                    label="Lewe"
-                                                    onClick={() => setLeftChecked(!leftChecked)}
-                                                />
-                                                <FormInput
-                                                    name="right"
-                                                    defaultChecked="true"
-                                                    type="checkbox"
-                                                    containerClass={'form-check-inline m-checkbox col-md-5'}
-                                                    label="Prawe"
-                                                    onClick={() => setRightChecked(!rightChecked)}
-                                                />
+                                                if (leftChecked || rightChecked) {
+                                                    handleAddVariantClick(values);
+                                                    next();
+                                                }
+                                                setError("Zaznacz conajmniej jedną opcję")
+                                            }}>
 
                                                 {error ? (
                                                     <p className="text-danger mb-3">{error}</p>
                                                 ) : <p></p>}
+
+                                                <div className={"d-flex justify-content-center align-items-center"}>
+                                                    <Button
+                                                        onClick={() => setIsConnectPressed(!isConnectPressed)}
+                                                        variant="info"
+                                                        className={`p-0 px-1 ${isConnectPressed ? 'connectButtonStylesPressed' : 'connectButtonStyles'}`}>
+                                                        <i className="uil-arrows-shrink-h"/>
+                                                    </Button>
+                                                </div>
                                                 <Row>
                                                     <Col md={6}>
-                                                        Value: {selectedValLeft ? <span>{selectedValLeft}</span> : null}
+                                                        <FormInput
+                                                            name="left"
+                                                            defaultChecked="true"
+                                                            type="checkbox"
+                                                            containerClass={'mb-2 d-flex justify-content-center align-items-center'}
+                                                            label="Lewe"
+                                                            onClick={(value) => {
+                                                                setError(null);
+                                                                setLeftChecked(value.target.checked)
+                                                            }}
+                                                        />
+                                                        Szerokość: {selectedValLeft ?
+                                                        <span>{selectedValLeft}</span> : null}
                                                         <FormInput
                                                             type={"range"}
+                                                            id={"rangeLeft"}
                                                             min={60}
                                                             max={100}
                                                             step={1}
                                                             className={"form-range border-0"}
-                                                            onChange={(value) => setSelectedValLeft(value.target.value)}
+                                                            onChange={(value) => {
+                                                                setSelectedValLeft(value.target.value);
+                                                                if (isConnectPressed) {
+                                                                    const rangeRight = document.getElementById('rangeRight');
+                                                                    if (rangeRight) {
+                                                                        rangeRight.value = value.target.value;
+                                                                        setSelectedValRight(rangeRight.value);
+                                                                        ReactDOM.findDOMNode(rangeRight).dispatchEvent(new Event('input', {bubbles: true})); // Trigger input event for React to detect the change
+                                                                    }
+                                                                }
+                                                            }}
                                                             disabled={!leftChecked}
                                                         />
 
                                                         <div className="">
-                                                        <Button onClick={next} variant="success"
-                                                                className="btn btn-success p-0 px-1"><i
-                                                            className="uil-plus font-size-20px"/></Button>
+                                                            <Button
+                                                                disabled={!leftChecked}
+                                                                onClick={() => {
+                                                                    setLeftWidthValues([...leftWidthValues, selectedValLeft])
+                                                                    if (isConnectPressed) {
+                                                                        setRightWidthValues([...rightWidthValues, selectedValLeft])
+                                                                    }
+                                                                }}
+                                                                variant="primary"
+                                                                className="p-0 px-1"
+                                                            >
+                                                                <i className="uil-plus font-size-20px"/>
+                                                            </Button>
                                                         </div>
-                                                        <div className="bg-light rounded my-3">
-                                                            <div className="text-center">234</div>
-                                                            <div className="text-center">234</div>
+                                                        <div
+                                                            className={`bg-light rounded my-3 ${!leftChecked ? 'invisible' : ''}`}>
+                                                            {leftWidthValues.map((value, index) => (<div key={index}
+                                                                                                         className="text-center">{value}</div>))}
                                                         </div>
                                                     </Col>
                                                     <Col md={6}>
-                                                        Value: {selectedValRight ?
+                                                        <FormInput
+                                                            name="right"
+                                                            defaultChecked="true"
+                                                            type="checkbox"
+                                                            containerClass={'mb-2 d-flex justify-content-center align-items-center'}
+                                                            label="Prawe"
+                                                            onClick={(value) => {
+                                                                setError(null);
+                                                                setRightChecked(value.target.checked)
+                                                            }}
+                                                        />
+                                                        Szerokość: {selectedValRight ?
                                                         <span>{selectedValRight}</span> : null}
                                                         <FormInput
                                                             type={"range"}
+                                                            id={"rangeRight"}
                                                             min={60}
                                                             max={100}
                                                             step={1}
                                                             className={"form-range border-0"}
-                                                            onChange={(value) => setSelectedValRight(value.target.value)}
+                                                            onChange={(value) => {
+                                                                setSelectedValRight(value.target.value);
+                                                                if (isConnectPressed) {
+                                                                    const rangeLeft = document.getElementById('rangeLeft');
+                                                                    if (rangeLeft) {
+                                                                        rangeLeft.value = value.target.value;
+                                                                        setSelectedValLeft(rangeLeft.value);
+                                                                        ReactDOM.findDOMNode(rangeLeft).dispatchEvent(new Event('input', {bubbles: true})); // Trigger input event for React to detect the change
+                                                                    }
+                                                                }
+                                                            }}
                                                             disabled={!rightChecked}
                                                         />
                                                         <div className="">
-                                                        <Button onClick={console.log(3)} variant="success"
-                                                                className="btn btn-success p-0 px-1"><i
-                                                            className="uil-plus font-size-20px"/></Button>
+                                                            <Button
+                                                                disabled={!rightChecked}
+                                                                onClick={() => {
+                                                                    setRightWidthValues([...rightWidthValues, selectedValRight])
+                                                                    if (isConnectPressed) {
+                                                                        setLeftWidthValues([...leftWidthValues, selectedValRight]);
+                                                                    }
+                                                                }}
+                                                                variant="primary"
+                                                                className="p-0 px-1"><i
+                                                                className="uil-plus font-size-20px"/></Button>
                                                         </div>
-                                                        <div className="bg-light rounded my-3">
-                                                            <div className="text-center">234</div>
-                                                            <div className="text-center">234</div>
+                                                        <div
+                                                            className={`bg-light rounded my-3 ${!rightChecked ? 'invisible' : ''}`}>
+                                                            {rightWidthValues.map((value, index) =>
+                                                                (<div key={index}
+                                                                      className="text-center">{value}</div>))}
                                                         </div>
                                                     </Col>
                                                 </Row>
