@@ -1,7 +1,7 @@
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import * as Yup from "yup";
-import {Button, Card, Col, Container, Form, FormGroup, ProgressBar, Row} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, ProgressBar, Row} from "react-bootstrap";
 import {Step, Steps, Wizard} from "react-albus";
 import {FormInput, VerticalForm} from "../../../components";
 import React, {useState} from "react";
@@ -98,7 +98,8 @@ const AddProduct = (): React$Element<React$FragmentType> => {
         <Wizard
             render={({step, steps}) => (
                 <Container className="wizard-container">
-                    <Card className={`wizard-inner-container ${step.id === 'addVariant' ? 'add-variant' : ''}`}>
+                    <Card
+                        className={`wizard-inner-container ${step.id === 'addVariant' || step.id === 'addWidth' ? 'add-variant' : ''}`}>
                         <Card.Body>
                             <h4 className="header-title mb-3">{header(step.id)}</h4>
                             <ProgressBar
@@ -192,8 +193,8 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                     color: {
                                                         RgbValue: values.target.RGB.value,
                                                         colorName: values.target.colorName.value
-                                                    }
-
+                                                    },
+                                                    images: variantImages,
                                                 }))
                                                 next();
                                             }}
@@ -259,11 +260,26 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                 <Step
                                     id="addWidth"
                                     render={({next, previous}) => (
-                                        <div className="add-variant">
+                                        <div className="add-width">
 
                                             <VerticalForm onSubmit={(event, values) => {
                                                 if (leftChecked || rightChecked) {
                                                     handleAddVariantClick(values);
+                                                    // setVariant(variant => ({
+                                                    //     ...variant,
+                                                    //     doorOptions:{
+                                                    //         left:{
+                                                    //             width: ,
+                                                    //             quantity: ,
+                                                    //             price:
+                                                    //         },
+                                                    //         right:{
+                                                    //             width: ,
+                                                    //             quantity: ,
+                                                    //             price:
+                                                    //         }
+                                                    //     }
+                                                    // }))
                                                     next();
                                                 }
                                                 setError("Zaznacz conajmniej jedną opcję")
@@ -317,21 +333,39 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                             disabled={!leftChecked}
                                                         />
 
-                                                        <div className="">
-                                                            <Button
-                                                                disabled={!leftChecked}
-                                                                onClick={() => {
-                                                                    setLeftWidthValues([...leftWidthValues, selectedValLeft])
-                                                                    if (isConnectPressed) {
-                                                                        setRightWidthValues([...rightWidthValues, selectedValLeft])
-                                                                    }
-                                                                }}
-                                                                variant="primary"
-                                                                className="p-0 px-1"
-                                                            >
-                                                                <i className="uil-plus font-size-20px"/>
-                                                            </Button>
-                                                        </div>
+                                                        <Row>
+                                                            <Col md={6}>
+                                                                <FormInput
+                                                                    type="number"
+                                                                    name="price"
+                                                                    label="Cena: &nbsp;"
+                                                                    step={0.01}
+                                                                    min={0}
+                                                                    className="my-1 price-input d-inline"
+                                                                />
+                                                            </Col>
+                                                            <Col className="pln-label">
+                                                                pln
+                                                            </Col>
+
+                                                            <Col className="d-flex justify-content-end">
+                                                                <div>
+                                                                    <Button
+                                                                        disabled={!leftChecked}
+                                                                        onClick={() => {
+                                                                            setLeftWidthValues([...leftWidthValues, selectedValLeft])
+                                                                            if (isConnectPressed) {
+                                                                                setRightWidthValues([...rightWidthValues, selectedValLeft])
+                                                                            }
+                                                                        }}
+                                                                        variant="primary"
+                                                                        className="p-0 px-1 my-1"
+                                                                    >
+                                                                        <i className="uil-plus font-size-20px"/>
+                                                                    </Button>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
                                                         <div
                                                             className={`bg-light rounded my-3 ${!leftChecked ? 'invisible' : ''}`}>
                                                             {leftWidthValues.map((value, index) => (<div key={index}
@@ -352,45 +386,64 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                         />
                                                         Szerokość: {selectedValRight ?
                                                         <span>{selectedValRight}</span> : null}
-                                                        <FormInput
-                                                            type={"range"}
-                                                            id={"rangeRight"}
-                                                            min={60}
-                                                            max={100}
-                                                            step={1}
-                                                            className={"form-range border-0"}
-                                                            onChange={(value) => {
-                                                                setSelectedValRight(value.target.value);
-                                                                if (isConnectPressed) {
-                                                                    const rangeLeft = document.getElementById('rangeLeft');
-                                                                    if (rangeLeft) {
-                                                                        rangeLeft.value = value.target.value;
-                                                                        setSelectedValLeft(rangeLeft.value);
-                                                                        ReactDOM.findDOMNode(rangeLeft).dispatchEvent(new Event('input', {bubbles: true})); // Trigger input event for React to detect the change
-                                                                    }
-                                                                }
-                                                            }}
-                                                            disabled={!rightChecked}
-                                                        />
-                                                        <div className="">
-                                                            <Button
-                                                                disabled={!rightChecked}
-                                                                onClick={() => {
-                                                                    setRightWidthValues([...rightWidthValues, selectedValRight])
+                                                        <Row>
+                                                            <FormInput
+                                                                type={"range"}
+                                                                id={"rangeRight"}
+                                                                min={60}
+                                                                max={100}
+                                                                step={1}
+                                                                className={"form-range border-0"}
+                                                                onChange={(value) => {
+                                                                    setSelectedValRight(value.target.value);
                                                                     if (isConnectPressed) {
-                                                                        setLeftWidthValues([...leftWidthValues, selectedValRight]);
+                                                                        const rangeLeft = document.getElementById('rangeLeft');
+                                                                        if (rangeLeft) {
+                                                                            rangeLeft.value = value.target.value;
+                                                                            setSelectedValLeft(rangeLeft.value);
+                                                                            ReactDOM.findDOMNode(rangeLeft).dispatchEvent(new Event('input', {bubbles: true})); // Trigger input event for React to detect the change
+                                                                        }
                                                                     }
                                                                 }}
-                                                                variant="primary"
-                                                                className="p-0 px-1"><i
-                                                                className="uil-plus font-size-20px"/></Button>
-                                                        </div>
-                                                        <div
-                                                            className={`bg-light rounded my-3 ${!rightChecked ? 'invisible' : ''}`}>
-                                                            {rightWidthValues.map((value, index) =>
-                                                                (<div key={index}
-                                                                      className="text-center">{value}</div>))}
-                                                        </div>
+                                                                disabled={!rightChecked}
+                                                            />
+                                                            <Col md={6}>
+                                                                <FormInput
+                                                                    type="number"
+                                                                    name="price"
+                                                                    label="Cena: &nbsp;"
+                                                                    step={0.01}
+                                                                    min={0}
+                                                                    className="my-1 price-input d-inline"
+                                                                />
+                                                            </Col>
+                                                            <Col className="pln-label">
+                                                                pln
+                                                            </Col>
+                                                            <Col className="d-flex justify-content-end">
+                                                                <div>
+                                                                    <Button
+                                                                        disabled={!rightChecked}
+                                                                        onClick={() => {
+                                                                            setRightWidthValues([...rightWidthValues, selectedValRight])
+                                                                            if (isConnectPressed) {
+                                                                                setLeftWidthValues([...leftWidthValues, selectedValRight]);
+                                                                            }
+                                                                        }}
+                                                                        variant="primary"
+                                                                        className="p-0 px-1 my-1"><i
+                                                                        className="uil-plus font-size-20px"/></Button>
+                                                                </div>
+                                                            </Col>
+
+
+                                                            <div
+                                                                className={`bg-light rounded my-3 ${!rightChecked ? 'invisible' : ''}`}>
+                                                                {rightWidthValues.map((value, index) =>
+                                                                    (<div key={index}
+                                                                          className="text-center">{value}</div>))}
+                                                            </div>
+                                                        </Row>
                                                     </Col>
                                                 </Row>
 

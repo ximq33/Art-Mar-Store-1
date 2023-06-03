@@ -1,9 +1,11 @@
 package com.ArtMar_Store.Api.domain.variants;
 
-import java.util.Map;
+import com.ArtMar_Store.Api.api.variants.WidthOption;
+
+import java.util.List;
 
 public record DoorOptions(
-        Map<Integer, Integer> left,
-        Map<Integer, Integer> right
+        List<WidthOption> left,
+        List<WidthOption> right
 ) implements VariantOptions {
 }

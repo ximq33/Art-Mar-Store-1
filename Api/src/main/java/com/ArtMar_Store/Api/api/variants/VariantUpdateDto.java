@@ -5,7 +5,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,13 +24,13 @@ class VariantUpdateDto{
         private final String colorName;
         @Length(min = 1, max = 100)
         private final String RGBvalue;
-        private final Map<Integer, Integer> leftOptions;
-        private final Map<Integer, Integer> rightOptions;
+        private final List<WidthOption> leftOptions;
+        private final List<WidthOption> rightOptions;
         @Length(min = 1, max = 100)
         private final String productId;
 
 
-        public VariantUpdateDto(String variantName, BigDecimal price, Integer quantity, Boolean disabled, String manufacturer, String colorName, String RGBvalue, Map<Integer, Integer> leftOptions, Map<Integer, Integer> rightOptions, String productId) {
+        public VariantUpdateDto(String variantName, BigDecimal price, Integer quantity, Boolean disabled, String manufacturer, String colorName, String RGBvalue, List<WidthOption> leftOptions, List<WidthOption> rightOptions, String productId) {
                 this.variantName = variantName;
                 this.price = price;
                 this.quantity = quantity;
@@ -69,10 +69,10 @@ class VariantUpdateDto{
         public Optional<String> getRGBvalue() {
                 return Optional.ofNullable(RGBvalue);
         }
-        public Optional<Map<Integer, Integer>> getLeftOptions(){
+        public Optional<List<WidthOption>> getLeftOptions(){
                 return Optional.ofNullable(leftOptions);
         }
-        public Optional<Map<Integer,Integer>> getRightOptions(){
+        public Optional<List<WidthOption>> getRightOptions(){
                 return Optional.ofNullable(rightOptions);
         }
 
