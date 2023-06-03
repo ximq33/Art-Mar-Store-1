@@ -88,7 +88,7 @@ body[data-layout-color="dark"] {
     .footer {
         border-top: 1px solid #{rgba(map-get($dark-grays, "600"), 0.2)};
         color: #{map-get($dark-grays, "600")};
-    
+
         .footer-links {
             a {
                 color: #{map-get($dark-grays, "600")};

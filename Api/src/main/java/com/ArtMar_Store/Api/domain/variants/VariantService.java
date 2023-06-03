@@ -1,5 +1,6 @@
 package com.ArtMar_Store.Api.domain.variants;
 
+import com.ArtMar_Store.Api.api.variants.WidthOption;
 import com.ArtMar_Store.Api.domain.products.Product;
 import com.ArtMar_Store.Api.domain.products.ProductId;
 import com.ArtMar_Store.Api.domain.products.ProductService;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -66,8 +66,8 @@ public class VariantService {
             Optional<Integer> quantityUpdate,
             Optional<Boolean> disabledUpdate,
             Optional<String> manufacturerUpdate,
-            Optional<Map<Integer, Integer>> leftUpdate,
-            Optional<Map<Integer, Integer>> rightUpdate,
+            Optional<List<WidthOption>> leftUpdate,
+            Optional<List<WidthOption>> rightUpdate,
             Optional<String> colorNameUpdate,
             Optional<String> RGBUpdate,
             Optional<String> productIdUpdate,
