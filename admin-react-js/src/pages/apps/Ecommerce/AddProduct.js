@@ -1,7 +1,7 @@
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import * as Yup from "yup";
-import {Button, Card, Col, Container, Form, ProgressBar, Row, Table} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, Image, ProgressBar, Row, Table} from "react-bootstrap";
 import {Step, Steps, Wizard} from "react-albus";
 import {FormInput, VerticalForm} from "../../../components";
 import React, {useState} from "react";
@@ -12,16 +12,8 @@ import ReactDOM from 'react-dom';
 
 
 const AddProduct = (): React$Element<React$FragmentType> => {
-    const [variantList, setVariantList] = useState([{
-        id: null,
-        colorName: null,
-        RGB: null,
-        left: true,
-        right: true
-    }]);
+    const [variantList, setVariantList] = useState([]);
     const [product, setProduct] = useState({});
-    const [allImages, setAllImages] = useState([]);
-    const [variantCount, setVariantCount] = useState(0);
     const [variantImages, setVariantImages] = useState([]);
     const [error, setError] = useState("");
     const [priceError, setPriceError] = useState("");
@@ -47,18 +39,6 @@ const AddProduct = (): React$Element<React$FragmentType> => {
             case "addWidth":
                 return "dodaj szerokości";
         }
-    }
-
-    const handleAddVariantClick = (values) => {
-        setAllImages(oldArray => [...oldArray, variantImages]);
-        setVariantList(prevList => {
-                const updatedList = [...prevList];
-                updatedList[variantCount].id = variantCount;
-                updatedList[variantCount].colorName = values.target.colorName.value;
-                updatedList[variantCount].RGB = values.target.RGB.value;
-            }
-        )
-        setVariantCount(variantCount + 1);
     }
 
 
@@ -151,13 +131,36 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                 />
                                 <Step
                                     id="variants"
-                                    render={({next, previous}) => (
+                                    render={({next, previous, go}) => (
                                         <VerticalForm onSubmit={(event, values) => next()}
                                                       resolver={validationSchema2}>
+                                            <Container className="d-flex flex-wrap">
 
-                                            <Button onClick={next} variant="success"
-                                                    className="btn btn-success my-2 mx-1"><i
-                                                className="uil-plus font-size-40px"/></Button>
+                                                {variantList.map((variant) => {
+                                                    console.log(variant.images[0]);
+                                                        return (
+                                                            <Link onClick={() => {
+                                                                setVariantImages(variant.images);
+                                                                setRightWidthOptions(variant.doorOptions.right);
+                                                                setLeftWidthOptions(variant.doorOptions.left);
+                                                                setVariant(variant);
+                                                                go(1);
+                                                            }}>
+                                                                <img className="card-img variant-img" src={variant.images[0].file.preview}></img>
+                                                            </Link>
+                                                        )
+                                                    }
+                                                )}
+                                                <div>
+
+                                                </div>
+
+                                                <Button onClick={next} variant="success"
+                                                        className="btn btn-success my-2 mx-1"><i
+                                                    className="uil-plus font-size-40px"/>
+                                                </Button>
+
+                                            </Container>
 
                                             <ul className="list-inline wizard mb-0 mt-5">
                                                 <li className="previous list-inline-item">
@@ -166,7 +169,8 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                     </Button>
                                                 </li>
                                                 <li className="next list-inline-item float-end">
-                                                    <Button variant="success" type="submit">
+                                                    <Button variant="success" type="submit"
+                                                            onClick={() => console.log(variantList)}>
                                                         Zakończ
                                                     </Button>
                                                 </li>
@@ -187,7 +191,7 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                         colorName: values.target.colorName.value
                                                     },
                                                     images: variantImages,
-                                                }))
+                                                }));
                                                 next();
                                             }}
                                                           resolver={validationSchema3}>
@@ -195,6 +199,12 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                 <FormInput
                                                     label="Nazwa wariantu"
                                                     type="text"
+                                                    placeholder={() => {
+                                                        if (variant != null) {
+                                                            return variant.VariantName;
+                                                        }
+                                                    }
+                                                    }
                                                     name="VariantName"
                                                     containerClass={'mb-3'}
                                                 />
@@ -202,10 +212,8 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                 <FileUploader
                                                     accept="image/*"
                                                     onFileUpload={(files) => {
-                                                        const count = variantCount;
                                                         const fileArray = files.map(file => ({
-                                                            variantCounter: count,
-                                                            file: file,
+                                                            file: file
                                                         }));
                                                         setVariantImages(fileArray);
                                                     }}
@@ -251,29 +259,30 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                 />
                                 <Step
                                     id="addWidth"
-                                    render={({next, previous}) => (
+                                    render={({step, previous, next, steps, go}) => (
                                         <div className="add-width">
 
                                             <VerticalForm onSubmit={(event, values) => {
                                                 if (leftChecked || rightChecked) {
-                                                    // setVariant(variant => ({
-                                                    //     ...variant,
-                                                    //     doorOptions:{
-                                                    //         left:{
-                                                    //             width: ,
-                                                    //             quantity: ,
-                                                    //             price:
-                                                    //         },
-                                                    //         right:{
-                                                    //             width: ,
-                                                    //             quantity: ,
-                                                    //             price:
-                                                    //         }
-                                                    //     }
-                                                    // }))
-                                                    next();
+                                                    const currentVariant = {
+                                                        ...variant,
+                                                        doorOptions: {
+                                                            left: leftWidthOptions,
+                                                            right: rightWidthOptions
+                                                        }
+                                                    }
+                                                    setVariantList([...variantList, currentVariant]);
+                                                    setError(null);
+                                                    setVariant(null);
+                                                    setLeftWidthOptions([]);
+                                                    setRightWidthOptions([]);
+                                                    setPriceError(null);
+                                                    setVariantImages([]);
+                                                    go(-2);
+                                                    console.log(leftWidthOptions);
+                                                } else {
+                                                    setError("Zaznacz conajmniej jedną opcję")
                                                 }
-                                                setError("Zaznacz conajmniej jedną opcję")
                                             }}>
 
                                                 {error ? (
