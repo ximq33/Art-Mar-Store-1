@@ -1,3 +1,18 @@
+
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-bordered {
+    border: 1px solid #000;
+}
+
+.text-center {
+    text-align: center;
+}
+
 .wizard-container{
     display: flex;
     align-items: center;
@@ -23,6 +38,25 @@
     }
 }
 
+@media (max-width: 768px) {
+    .width-column {
+        margin-top: 20px;
+    }
+    .price-col{
+        flex-basis: 40%!important;
+        max-width: 40%!important;
+    }
+    .pln-label{
+        margin-top: 50px!important;
+    }
+    .price-input{
+        width: 100% !important;
+    }
+    .add-button{
+        margin-top: 39px!important;
+    }
+}
+
 .price-input{
     width: 73%;
 }
@@ -34,7 +68,10 @@
 
 
 .wizard-inner-container.add-variant {
-    height: 75vh;
+    max-height: 80vh;
+}
+.wizard-inner-container.add-width {
+    max-height: 80vh;
 }
 
 .font-size-40px{
@@ -68,6 +105,9 @@
 .scroll.add-variant{
     overflow: auto;
     height: 750px;
+}
+.scroll.add-width{
+    overflow: auto;
 }
 
 .slider-track {
