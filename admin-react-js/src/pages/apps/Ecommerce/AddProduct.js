@@ -1,7 +1,7 @@
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import * as Yup from "yup";
-import {Button, Card, Col, Container, Form, ProgressBar, Row} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, ProgressBar, Row, Table} from "react-bootstrap";
 import {Step, Steps, Wizard} from "react-albus";
 import {FormInput, VerticalForm} from "../../../components";
 import React, {useState} from "react";
@@ -24,10 +24,11 @@ const AddProduct = (): React$Element<React$FragmentType> => {
     const [variantCount, setVariantCount] = useState(0);
     const [variantImages, setVariantImages] = useState([]);
     const [error, setError] = useState("");
+    const [priceError, setPriceError] = useState("");
 
     const [variant, setVariant] = useState({});
-    const [leftWidthValues, setLeftWidthValues] = useState([]);
-    const [rightWidthValues, setRightWidthValues] = useState([]);
+    const [leftWidthOptions, setLeftWidthOptions] = useState([]);
+    const [rightWidthOptions, setRightWidthOptions] = useState([]);
 
     const [selectedValLeft, setSelectedValLeft] = useState(80);
     const [selectedValRight, setSelectedValRight] = useState(80);
@@ -48,14 +49,6 @@ const AddProduct = (): React$Element<React$FragmentType> => {
         }
     }
 
-
-    const onSlideFunc = (value) => {
-        console.log(value)
-
-        console.log("dupson " + leftWidthValues)
-        setSelectedVals2(value)
-    }
-
     const handleAddVariantClick = (values) => {
         setAllImages(oldArray => [...oldArray, variantImages]);
         setVariantList(prevList => {
@@ -65,7 +58,6 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                 updatedList[variantCount].RGB = values.target.RGB.value;
             }
         )
-        console.log(variantList)
         setVariantCount(variantCount + 1);
     }
 
@@ -99,7 +91,7 @@ const AddProduct = (): React$Element<React$FragmentType> => {
             render={({step, steps}) => (
                 <Container className="wizard-container">
                     <Card
-                        className={`wizard-inner-container ${step.id === 'addVariant' || step.id === 'addWidth' ? 'add-variant' : ''}`}>
+                        className={`wizard-inner-container ${step.id === 'addVariant' ? 'add-variant' : '' || step.id === 'addWidth' ? 'add-width' : ''}`}>
                         <Card.Body>
                             <h4 className="header-title mb-3">{header(step.id)}</h4>
                             <ProgressBar
@@ -264,7 +256,6 @@ const AddProduct = (): React$Element<React$FragmentType> => {
 
                                             <VerticalForm onSubmit={(event, values) => {
                                                 if (leftChecked || rightChecked) {
-                                                    handleAddVariantClick(values);
                                                     // setVariant(variant => ({
                                                     //     ...variant,
                                                     //     doorOptions:{
@@ -289,6 +280,7 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                     <p className="text-danger mb-3">{error}</p>
                                                 ) : <p></p>}
 
+
                                                 <div className={"d-flex justify-content-center align-items-center"}>
                                                     <Button
                                                         onClick={() => setIsConnectPressed(!isConnectPressed)}
@@ -298,7 +290,7 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                     </Button>
                                                 </div>
                                                 <Row>
-                                                    <Col md={6}>
+                                                    <Col md={6} className="width-column">
                                                         <FormInput
                                                             name="left"
                                                             defaultChecked="true"
@@ -334,14 +326,17 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                         />
 
                                                         <Row>
-                                                            <Col md={6}>
+                                                            <Col md={6} className={"price-col"}>
                                                                 <FormInput
                                                                     type="number"
+                                                                    id="leftPrice"
                                                                     name="price"
                                                                     label="Cena: &nbsp;"
                                                                     step={0.01}
                                                                     min={0}
+                                                                    disabled={!leftChecked}
                                                                     className="my-1 price-input d-inline"
+                                                                    onChange={() => setPriceError(null)}
                                                                 />
                                                             </Col>
                                                             <Col className="pln-label">
@@ -353,26 +348,39 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                                     <Button
                                                                         disabled={!leftChecked}
                                                                         onClick={() => {
-                                                                            setLeftWidthValues([...leftWidthValues, selectedValLeft])
-                                                                            if (isConnectPressed) {
-                                                                                setRightWidthValues([...rightWidthValues, selectedValLeft])
+                                                                            const leftPriceValue = document.getElementById("leftPrice").value;
+                                                                            if (leftPriceValue === '' || leftPriceValue === '0') {
+                                                                                setPriceError("Proszę wpisać cenę");
+                                                                            } else {
+                                                                                setLeftWidthOptions([
+                                                                                    ...leftWidthOptions,
+                                                                                    {
+                                                                                        width: selectedValLeft,
+                                                                                        price: document.getElementById("leftPrice").value
+                                                                                    }])
+
+                                                                                if (isConnectPressed && rightChecked) {
+                                                                                    console.log('halo');
+                                                                                    setRightWidthOptions([
+                                                                                        ...rightWidthOptions,
+                                                                                        {
+                                                                                            width: selectedValRight,
+                                                                                            price: document.getElementById("leftPrice").value
+                                                                                        }
+                                                                                    ])
+                                                                                }
                                                                             }
                                                                         }}
                                                                         variant="primary"
-                                                                        className="p-0 px-1 my-1"
+                                                                        className="p-0 px-1 my-1 add-button"
                                                                     >
                                                                         <i className="uil-plus font-size-20px"/>
                                                                     </Button>
                                                                 </div>
                                                             </Col>
                                                         </Row>
-                                                        <div
-                                                            className={`bg-light rounded my-3 ${!leftChecked ? 'invisible' : ''}`}>
-                                                            {leftWidthValues.map((value, index) => (<div key={index}
-                                                                                                         className="text-center">{value}</div>))}
-                                                        </div>
                                                     </Col>
-                                                    <Col md={6}>
+                                                    <Col md={6} className={"width-column"}>
                                                         <FormInput
                                                             name="right"
                                                             defaultChecked="true"
@@ -407,14 +415,17 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                                 }}
                                                                 disabled={!rightChecked}
                                                             />
-                                                            <Col md={6}>
+                                                            <Col md={6} className={"price-col"}>
                                                                 <FormInput
                                                                     type="number"
+                                                                    id={"rightPrice"}
                                                                     name="price"
                                                                     label="Cena: &nbsp;"
                                                                     step={0.01}
                                                                     min={0}
                                                                     className="my-1 price-input d-inline"
+                                                                    disabled={!rightChecked}
+                                                                    onChange={() => setPriceError(null)}
                                                                 />
                                                             </Col>
                                                             <Col className="pln-label">
@@ -425,26 +436,100 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                                     <Button
                                                                         disabled={!rightChecked}
                                                                         onClick={() => {
-                                                                            setRightWidthValues([...rightWidthValues, selectedValRight])
-                                                                            if (isConnectPressed) {
-                                                                                setLeftWidthValues([...leftWidthValues, selectedValRight]);
+                                                                            const rightPriceValue = document.getElementById("rightPrice").value;
+                                                                            if (rightPriceValue === '' || rightPriceValue === '0') {
+                                                                                setPriceError("Proszę wpisać cenę");
+                                                                            } else {
+                                                                                setRightWidthOptions([
+                                                                                    ...rightWidthOptions,
+                                                                                    {
+                                                                                        width: selectedValRight,
+                                                                                        price: document.getElementById("rightPrice").value
+                                                                                    }
+                                                                                ])
+                                                                                if (isConnectPressed && leftChecked) {
+                                                                                    setLeftWidthOptions([
+                                                                                        ...leftWidthOptions,
+                                                                                        {
+                                                                                            width: selectedValLeft,
+                                                                                            price: document.getElementById("rightPrice").value
+                                                                                        }])
+                                                                                }
                                                                             }
                                                                         }}
                                                                         variant="primary"
-                                                                        className="p-0 px-1 my-1"><i
+                                                                        className="p-0 px-1 my-1 add-button"><i
                                                                         className="uil-plus font-size-20px"/></Button>
+
                                                                 </div>
                                                             </Col>
-
-
-                                                            <div
-                                                                className={`bg-light rounded my-3 ${!rightChecked ? 'invisible' : ''}`}>
-                                                                {rightWidthValues.map((value, index) =>
-                                                                    (<div key={index}
-                                                                          className="text-center">{value}</div>))}
-                                                            </div>
                                                         </Row>
                                                     </Col>
+                                                    <Row>
+                                                        {priceError ? (
+                                                            <p className="text-danger my-2">{priceError}</p>
+                                                        ) : <p>&nbsp;</p>}
+                                                    </Row>
+                                                    <Row>
+                                                        <Col md={6}>
+                                                            <Table
+                                                                className={`mb-0 my-2 ${leftWidthOptions.length === 0 || !leftChecked ? 'invisible' : ''}`}
+                                                                hover>
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Szerokość</th>
+                                                                    <th>Cena</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {leftWidthOptions.map((record, index) => {
+                                                                    return (
+                                                                        <tr key={index}>
+                                                                            <td>{record.width} cm</td>
+                                                                            <td>{record.price} pln</td>
+                                                                            <td className="table-action text-center">
+                                                                                <Link to="#"
+                                                                                      className="action-icon"
+                                                                                      onClick={() => leftWidthOptions.splice(index, 1)}>
+                                                                                    <i className="mdi mdi-delete"></i>
+                                                                                </Link>
+                                                                            </td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                                </tbody>
+                                                            </Table>
+                                                        </Col>
+                                                        <Col md={6}>
+                                                            <Table
+                                                                className={`mb-0 my-2 ${rightWidthOptions.length === 0 || !rightChecked ? 'invisible' : '' ? 'invisible' : ''}`}
+                                                                hover>
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Szerokość</th>
+                                                                    <th>Cena</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {rightWidthOptions.map((record, index) => {
+                                                                    return (
+                                                                        <tr key={index}>
+                                                                            <td>{record.width} cm</td>
+                                                                            <td>{record.price} pln</td>
+                                                                            <td className="table-action text-center">
+                                                                                <Link to="#"
+                                                                                      className="action-icon"
+                                                                                      onClick={() => rightWidthOptions.splice(index, 1)}>
+                                                                                    <i className="mdi mdi-delete"></i>
+                                                                                </Link>
+                                                                            </td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                                </tbody>
+                                                            </Table>
+                                                        </Col>
+                                                    </Row>
                                                 </Row>
 
 
@@ -516,7 +601,8 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                 </Container>
             )}
         />
-    );
+    )
+        ;
 };
 
 export default AddProduct;
