@@ -9,10 +9,10 @@ import {Link} from "react-router-dom";
 import FileUploader from "../../../components/FileUploader";
 import "./wizard.css";
 import ReactDOM from 'react-dom';
-
+import {getCookie, setCookie, setLocalStorageItem, getLocalStorageItem} from "../../../utils/utils";
+const { uuid } = require('uuidv4');
 
 const AddProduct = (): React$Element<React$FragmentType> => {
-    const [variantList, setVariantList] = useState([]);
     const [product, setProduct] = useState({});
     const [variantImages, setVariantImages] = useState([]);
     const [error, setError] = useState("");
@@ -135,10 +135,9 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                         <VerticalForm onSubmit={(event, values) => next()}
                                                       resolver={validationSchema2}>
                                             <Container className="d-flex flex-wrap">
-
-                                                {variantList.map((variant) => {
-                                                    console.log(variant.images[0]);
+                                                {getLocalStorageItem("variantList") && getLocalStorageItem("variantList").map((variant) => {
                                                         return (
+                                                            <div className="frame my-2 mx-1">
                                                             <Link onClick={() => {
                                                                 setVariantImages(variant.images);
                                                                 setRightWidthOptions(variant.doorOptions.right);
@@ -146,8 +145,9 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                                 setVariant(variant);
                                                                 go(1);
                                                             }}>
-                                                                <img className="card-img variant-img" src={variant.images[0].file.preview}></img>
+                                                                <img className="card-img variant-img" src={getLocalStorageItem(variant.indexes[0])} alt="Image"></img>
                                                             </Link>
+                                                            </div>
                                                         )
                                                     }
                                                 )}
@@ -170,7 +170,7 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                 </li>
                                                 <li className="next list-inline-item float-end">
                                                     <Button variant="success" type="submit"
-                                                            onClick={() => console.log(variantList)}>
+                                                            >
                                                         Zakończ
                                                     </Button>
                                                 </li>
@@ -184,13 +184,19 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                         <div className="add-variant">
 
                                             <VerticalForm onSubmit={(event, values) => {
+                                                const indexes = [];
+                                                variantImages.map((image) => {
+                                                    const id = uuid();
+                                                    setLocalStorageItem(id, image);
+                                                    indexes.push(id);
+                                                })
                                                 setVariant(() => ({
                                                     VariantName: values.target.VariantName.value,
                                                     color: {
                                                         RgbValue: values.target.RGB.value,
                                                         colorName: values.target.colorName.value
                                                     },
-                                                    images: variantImages,
+                                                    indexes: indexes,
                                                 }));
                                                 next();
                                             }}
@@ -212,10 +218,21 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                 <FileUploader
                                                     accept="image/*"
                                                     onFileUpload={(files) => {
-                                                        const fileArray = files.map(file => ({
-                                                            file: file
-                                                        }));
-                                                        setVariantImages(fileArray);
+                                                        const fileArray = [];
+
+                                                        files.forEach(file => {
+                                                            const reader = new FileReader();
+
+                                                            reader.onloadend = function () {
+                                                                const base64Image = reader.result;
+                                                                fileArray.push(base64Image); // Add base64Image to fileArray
+
+                                                                if (fileArray.length === files.length) {
+                                                                    setVariantImages(fileArray);
+                                                                }
+                                                            };
+                                                            reader.readAsDataURL(file); // Read file as data URL (base64)
+                                                        });
                                                     }}
                                                     onFileRemove={(file) => {
                                                         const updatedImages = variantImages.filter((_, index) => index !== file);
@@ -271,18 +288,28 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                             right: rightWidthOptions
                                                         }
                                                     }
-                                                    setVariantList([...variantList, currentVariant]);
+                                                    const currentVariantList = [currentVariant];
+
+                                                    const variantList = getLocalStorageItem("variantList");
+                                                    if (!variantList) {
+                                                        setLocalStorageItem("variantList",currentVariantList);
+                                                    }
+                                                    else {
+                                                        const updatedVariantList = [...variantList, currentVariant];
+                                                        setLocalStorageItem("variantList", updatedVariantList);
+                                                    }
                                                     setError(null);
                                                     setVariant(null);
                                                     setLeftWidthOptions([]);
                                                     setRightWidthOptions([]);
                                                     setPriceError(null);
                                                     setVariantImages([]);
+
                                                     go(-2);
-                                                    console.log(leftWidthOptions);
                                                 } else {
                                                     setError("Zaznacz conajmniej jedną opcję")
                                                 }
+
                                             }}>
 
                                                 {error ? (
@@ -369,7 +396,6 @@ const AddProduct = (): React$Element<React$FragmentType> => {
                                                                                     }])
 
                                                                                 if (isConnectPressed && rightChecked) {
-                                                                                    console.log('halo');
                                                                                     setRightWidthOptions([
                                                                                         ...rightWidthOptions,
                                                                                         {

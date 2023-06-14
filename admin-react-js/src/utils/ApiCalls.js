@@ -64,6 +64,7 @@ export function setRefreshToken(token) {
     sessionStorage.setItem("refreshToken", token)
 }
 
+
 export const convertProductResponseToProductList = async (response: Response) => {
     const productsJson = await response.json();
 
